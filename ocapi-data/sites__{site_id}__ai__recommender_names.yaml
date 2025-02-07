@@ -1,0 +1,76 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  recommenders_result:
+    description: A list of recommenders available for use in recommendation requests.
+    properties:
+      recommenders:
+        description: The recommender objects
+        items:
+          $ref: '#/definitions/recommender'
+        type: array
+  recommender:
+    description: The recommender object
+    properties:
+      description:
+        description: The description of the recommender
+        type: string
+      name:
+        description: The name of the recommender
+        type: string
+paths:
+  /sites/{site_id}/ai/recommender_names:
+    get:
+      description: Get a list of available AI recommenders. Recommenders are configured
+        in the Einstein configurator and are required with AI recommendation API requests.
+      operationId: getSitesByIDAiRecommenderNames
+      parameters:
+      - description: Site ID to get a list of recommenders for.
+        in: path
+        maxLength: 256
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/recommenders_result'
+        '400':
+          description: '`CQuotientException` - If CQuotient responds with a non-success
+            status code.'
+        '404':
+          description: '`SiteNotFoundException` - If the given site does not exist.'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

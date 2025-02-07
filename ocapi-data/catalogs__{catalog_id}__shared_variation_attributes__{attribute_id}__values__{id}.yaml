@@ -1,0 +1,250 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  media_file:
+    properties:
+      abs_url:
+        description: The absolute URL with request protocol (read only)
+        type: string
+      alt:
+        additionalProperties:
+          type: string
+        description: The alternative image text
+        format: localized
+        type: object
+      dis_base_url:
+        description: The DIS base URL only for product images
+        type: string
+      path:
+        description: "The raw media file path\n (only this needs to be provided in\
+          \ update request)"
+        type: string
+      title:
+        additionalProperties:
+          type: string
+        description: The image title
+        format: localized
+        type: object
+  variation_attribute_value:
+    description: Document representing a variation attribute value.
+    properties:
+      description:
+        additionalProperties:
+          type: string
+        description: The localized description of the variation value.
+        format: localized
+        type: object
+      image:
+        $ref: '#/definitions/media_file'
+        description: The first product image for the configured viewtype and this
+          variation value.
+      image_swatch:
+        $ref: '#/definitions/media_file'
+        description: The first product image for the configured viewtype and this
+          variation value. (typically the swatch image)
+      link:
+        description: ''
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation value.
+        format: localized
+        type: object
+      orderable:
+        description: A flag indicating whether at least one variant with this variation
+          attribute value is available to sell.
+        type: boolean
+      position:
+        description: The position of the value among all values of a variation attribute.
+        format: double
+        type: number
+      value:
+        description: The actual variation value.
+        minLength: 1
+        type: string
+    required:
+    - value
+paths:
+  /catalogs/{catalog_id}/shared_variation_attributes/{attribute_id}/values/{id}:
+    delete:
+      description: Deletes the variation attribute value of a variation attribute
+        bound to a catalog
+      operationId: deleteCatalogsByIDSharedVariationAttributesByIDValuesByID
+      parameters:
+      - description: The id of the catalog.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the variation attribute that contains the value.
+        in: path
+        minLength: 1
+        name: attribute_id
+        required: true
+        type: string
+      - description: The id of one value to remove
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        '204':
+          description: ''
+        '404':
+          description: '`CatalogNotFoundException` - if the catalog id specified cannot
+            be found or `VariationAttributeNotFoundException` - if the attribute id
+            specified is not a valid variation attribute or `VariationAttributeValueNotFoundException`
+            - if the value id specified does not a valid value id'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    get:
+      description: Action to get Shared Variation Attribute value information.
+      operationId: getCatalogsByIDSharedVariationAttributesByIDValuesByID
+      parameters:
+      - description: The owning catalog ID.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The variation attribute custom ID
+        in: path
+        minLength: 1
+        name: attribute_id
+        required: true
+        type: string
+      - description: The id of the variation attribute value
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variation_attribute_value'
+        '404':
+          description: '`CatalogNotFoundException` - Indicates the catalog is not
+            found. or `VariationAttributeNotFoundException` - Indicate the variation
+            attribute is not found or `VariationAttributeValueNotFoundException` -
+            Indicate the variation attribute value is not found'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    patch:
+      description: Updates the variation attribute value of a variation attribute
+        of a catalog.
+      operationId: patchCatalogsByIDSharedVariationAttributesByIDValuesByID
+      parameters:
+      - description: The id of the catalog.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the requested variation attribute.
+        in: path
+        minLength: 1
+        name: attribute_id
+        required: true
+        type: string
+      - description: The id of the variation value.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/variation_attribute_value'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variation_attribute_value'
+        '404':
+          description: '`CatalogNotFoundException` - if the catalog id specified cannot
+            be found or `VariationAttributeNotFoundException` - if the attribute id
+            specified is not a valid variation attribute or `VariationAttributeValueNotFoundException`
+            - if the value id specified does not a valid value id'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    put:
+      description: Action to create a Shared Variation Attribute value.
+      operationId: putCatalogsByIDSharedVariationAttributesByIDValuesByID
+      parameters:
+      - description: The owning catalog ID.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The variation attribute ID
+        in: path
+        minLength: 1
+        name: attribute_id
+        required: true
+        type: string
+      - description: The id of the variation attribute value
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/variation_attribute_value'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variation_attribute_value'
+        '404':
+          description: '`CatalogNotFoundException` - Indicates the catalog is not
+            found. or `VariationAttributeNotFoundException` - Indicate the variation
+            attribute is not found or `VariationAttributeValueNotFoundException` -
+            Indicate the variation attribute value is not found'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs

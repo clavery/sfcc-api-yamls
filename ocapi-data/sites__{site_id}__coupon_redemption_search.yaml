@@ -1,0 +1,241 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  coupon_redemption:
+    description: A redemption record returned from the coupon redemption resources
+    properties:
+      code:
+        description: The coupon code that was redeemed
+        type: string
+      coupon_id:
+        description: The coupon id that was redeemed
+        type: string
+      creation_date:
+        format: date-time
+        type: string
+      customer_email:
+        description: The customer email that was used to redeem it
+        type: string
+      last_modified:
+        format: date-time
+        type: string
+      order_no:
+        description: The order number where the redemption occurred
+        type: string
+      view_order_url:
+        description: A URL able to access the order
+        type: string
+  coupon_redemption_search_result:
+    description: The result of the coupon redemption search
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        items:
+          type: object
+        type: array
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        minimum: 0
+        type: integer
+      expand:
+        description: List of expansions to be applied to each search results. Expands
+          are optional
+        items:
+          type: string
+        type: array
+      hits:
+        description: The hits from the search
+        items:
+          $ref: '#/definitions/coupon_redemption'
+        type: array
+      next:
+        $ref: '#/definitions/result_page'
+        description: The URL of the next result page.
+      previous:
+        $ref: '#/definitions/result_page'
+        description: The URL of the previous result page.
+      query:
+        $ref: '#/definitions/query'
+        description: The query passed into the search
+        x-sub_types:
+          nested_query: '#/definitions/nested_query'
+          filtered_query: '#/definitions/filtered_query'
+          text_query: '#/definitions/text_query'
+          match_all_query: '#/definitions/match_all_query'
+          term_query: '#/definitions/term_query'
+          bool_query: '#/definitions/bool_query'
+      select:
+        description: The fields that you want to select.
+        type: string
+      sorts:
+        description: The list of sort clauses configured for the search request. Sort
+          clauses are optional.
+        items:
+          $ref: '#/definitions/sort'
+        type: array
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+  result_page:
+    description: Data that can be used to get the next and previous page of a Data
+      API results object.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        type: integer
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        type: integer
+  query:
+    description: "Document representing a query. A query contains a set of objects\
+      \ that define criteria\n used to select records. A query can contain one of\
+      \ the following:\n"
+  search_request:
+    description: Document representing a search request for retrieving items within
+      the Data API. The query is a potentially complex set of expressions. The fields
+      that each query supports are defined within the search resource.
+    properties:
+      count:
+        description: The number of returned documents
+        format: int32
+        maximum: 200
+        minimum: 1
+        type: integer
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        minimum: 0
+        type: integer
+      expand:
+        description: List of expansions to be applied to each search results. Expands
+          are optional
+        items:
+          type: string
+        type: array
+      query:
+        $ref: '#/definitions/query'
+        description: The query to apply
+        x-sub_types:
+          nested_query: '#/definitions/nested_query'
+          filtered_query: '#/definitions/filtered_query'
+          text_query: '#/definitions/text_query'
+          match_all_query: '#/definitions/match_all_query'
+          term_query: '#/definitions/term_query'
+          bool_query: '#/definitions/bool_query'
+      select:
+        description: The field to be selected.
+        type: string
+      sorts:
+        description: The list of sort clauses configured for the search request. Sort
+          clauses are optional.
+        items:
+          $ref: '#/definitions/sort'
+        type: array
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+    required:
+    - query
+  sort:
+    description: Document representing a sort request.
+    properties:
+      field:
+        description: The name of the field to sort on.
+        type: string
+      sort_order:
+        description: The sort order to be applied when sorting. When omitted, the
+          default sort order (ASC) is used.
+        enum:
+        - asc
+        - desc
+        type: string
+    required:
+    - field
+paths:
+  /sites/{site_id}/coupon_redemption_search:
+    post:
+      description: "Searches for coupon redemptions.\n \n The Coupon Redemption Search\
+        \ document contains a search object that allows filtering on various attributes.\n\
+        \ \n\n The query attribute specifies a complex query that can be used to narrow\
+        \ down the search. These are the list\n of searchable attributes:\n \n   \
+        \  - code - String\n     - coupon_id - String\n     - customer_email - String\n\
+        \     - order_no - String\n \n\n Note that only searchable attributes can\
+        \ be used in sorting.\n\n If the role to which the user belongs does not have\
+        \ View_Coupon_Codes permission, then the coupon codes returned will be masked."
+      operationId: postSitesByIDCouponRedemptionSearch
+      parameters:
+      - description: The site context.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/search_request'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/coupon_redemption_search_result'
+        '400':
+          description: '`MalformedSearchParameterException` - Thrown if the query
+            is ill-formed.'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

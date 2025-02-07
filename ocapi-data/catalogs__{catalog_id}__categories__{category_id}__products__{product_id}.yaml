@@ -1,0 +1,1578 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  product:
+    description: Document representing a product
+    properties:
+      assigned_categories:
+        description: The catalog categories that the product is assigned to
+        items:
+          $ref: '#/definitions/catalog_category_id'
+        type: array
+      ats:
+        description: The ATS(Available To Sell) inventory value of the product. This
+          is a calculated value.
+        format: double
+        type: number
+      brand:
+        description: The brand of the product.
+        x-label:
+          default: Brand
+        type: string
+      bundled_products:
+        description: The array of bundled products which the product includes.
+        items:
+          $ref: '#/definitions/product'
+        type: array
+      c_availableForInStorePickup:
+        description: Signals if there are inventory lists for brick-and-mortar stores
+          associated with this product.
+        x-label:
+          default: Available for In Store Pickup
+        type: boolean
+      c_batteryLife:
+        x-label:
+          default: Battery Life
+        type: string
+      c_batteryType:
+        x-label:
+          default: Battery Type
+        type: string
+      c_bootType:
+        description: Type of Boot for search refinement.
+        items:
+          enum:
+          - '0010'
+          - '0020'
+          - '0030'
+          - '0040'
+          - '0050'
+          - '0060'
+          - '0070'
+          x-enum-labels:
+          - default: Winter
+          - default: Waterproof
+          - default: Classic
+          - default: Ankle & Mid
+          - default: Tall
+          - default: 6"
+          - default: Casual
+          type: string
+        x-label:
+          default: Boot Type
+        type: array
+      c_bottomType:
+        description: Bottom type for search refinement
+        items:
+          enum:
+          - '0010'
+          - '0020'
+          - '0030'
+          - '0040'
+          - '0050'
+          - '0060'
+          - '0070'
+          - 0080
+          x-enum-labels:
+          - default: Khakis
+          - default: Denim
+          - default: Dress
+          - default: Casual
+          - default: Shorts
+          - default: Work
+          - default: Cargo
+          - default: Fleece
+          type: string
+        x-label:
+          default: Bottom Type
+        type: array
+      c_color:
+        description: Product color used for variation attribute
+        x-label:
+          default: Color
+        type: string
+      c_consoleWarranty:
+        x-label:
+          default: Extended Warranty
+        type: string
+      c_customCSSFile:
+        $ref: '#/definitions/media_file'
+        description: Use this attribute to apply custom styles for this product.
+        x-label:
+          default: Custom CSS File
+      c_digitalCameraFeatures:
+        items:
+          enum:
+          - '0010'
+          - '0020'
+          - '0030'
+          - '0040'
+          - '0050'
+          - '0060'
+          - '0070'
+          - 0080
+          - 0090
+          - '0100'
+          - '0110'
+          - '0120'
+          - '0130'
+          - '0140'
+          - '0150'
+          - '0160'
+          - '0170'
+          - 0180
+          - 0190
+          - '0200'
+          - '0210'
+          - '0220'
+          - '0230'
+          - '0240'
+          - '0250'
+          - '0260'
+          - '0270'
+          - 0280
+          x-enum-labels:
+          - default: Built In Flash
+          - default: HD Video
+          - default: GPS Geo Tagging
+          - default: Variable Self Timer
+          - default: Image Optimizer
+          - default: Stop Motion Video
+          - default: Self Cleaning
+          - default: Pro Performance
+          - default: 51 Area Autofocus
+          - default: Super Fast Startup
+          - default: Easy to Learn
+          - default: Wide Angle Optical Zoom
+          - default: Manual Controls
+          - default: Wired LAN
+          - default: GPS Enabled
+          - default: In Camera Red Eye Reduction
+          - default: Large LCD
+          - default: Optical Zoom
+          - default: Anti-Shake
+          - default: Touch Screen
+          - default: Image Stabilization
+          - default: Fast Shutter
+          - default: Slim
+          - default: 35mm Full Frame Sensor
+          - default: Wide Angle|Continuous Shooting
+          - default: Continuous Shooting
+          - default: ISO 1600
+          - default: Red Eye Reduction
+          type: string
+        x-label:
+          default: Digital Camera Features
+        type: array
+      c_digitalCameraPixels:
+        x-label:
+          default: Digital Camera Pixels
+        type: string
+      c_digitalCameraType:
+        x-label:
+          default: Digital Camera Type
+        type: string
+      c_digitalCameraWarranty:
+        x-label:
+          default: Extended Warranty
+        type: string
+      c_dimDepth:
+        x-label:
+          default: Depth
+        type: string
+      c_dimHeight:
+        x-label:
+          default: Height
+        type: string
+      c_dimWeight:
+        x-label:
+          default: Weight
+        type: string
+      c_dimWidth:
+        x-label:
+          default: Width
+        type: string
+      c_displaySize:
+        x-label:
+          default: Display Size
+        type: string
+      c_gameGenre:
+        items:
+          enum:
+          - Action
+          - Educational
+          - Kids
+          - Racing
+          - Role-Playing
+          - Sports
+          - Strategy
+          x-enum-labels:
+          - default: Action
+          - default: Educational
+          - default: Kids
+          - default: Racing
+          - default: Role-Playing
+          - default: Sports
+          - default: Strategy
+          type: string
+        x-label:
+          default: Genre
+        type: array
+      c_gameRating:
+        x-label:
+          default: Game Rating
+        type: string
+      c_gameSystemType:
+        x-label:
+          default: Gaming System
+        type: string
+      c_gpsFeatures:
+        items:
+          enum:
+          - '0010'
+          - '0020'
+          - '0030'
+          - '0040'
+          - '0050'
+          - '0060'
+          - '0070'
+          - 0080
+          - 0090
+          - '0100'
+          - '0110'
+          - '0120'
+          - '0130'
+          - '0140'
+          - '0150'
+          - '0160'
+          - '0170'
+          - 0180
+          - 0190
+          - '0200'
+          - '0210'
+          - '0230'
+          x-enum-labels:
+          - default: Preloaded
+          - default: Voice Prompts
+          - default: 3D
+          - default: Touch Screen
+          - default: FM Traffic
+          - default: MSN Direct
+          - default: MP3 Player
+          - default: Picture Viewer
+          - default: "Bluetooth\xAE"
+          - default: Speech Recognition
+          - default: XM Navtraffic
+          - default: Waterproof
+          - default: Motorcycle Ready
+          - default: Lunar Tracking
+          - default: Wrist Wear
+          - default: Barometer
+          - default: Compass
+          - default: Geocaching
+          - default: Jeppesen Enabled
+          - default: Built-in HIS
+          - default: Auto Logbook
+          - default: Automotive Friendly
+          type: string
+        x-label:
+          default: GPS Features
+        type: array
+      c_gpsType:
+        items:
+          enum:
+          - '0010'
+          - '0020'
+          - '0030'
+          - '0040'
+          x-enum-labels:
+          - default: Automotive
+          - default: Personal
+          - default: Outdoor
+          - default: Aviation
+          type: string
+        x-label:
+          default: GPS Type
+        type: array
+      c_gpsWarranty:
+        x-label:
+          default: Extended Warranty
+        type: string
+      c_imageAspectRatio:
+        x-label:
+          default: Image Aspect Ratio
+        type: string
+      c_isNew:
+        x-label:
+          default: New Arrival?
+        type: boolean
+      c_isNewtest:
+        description: This indiciates if the product is a new arrival.
+        x-label:
+          default: New Arrival?
+        type: boolean
+      c_isSale:
+        description: This is the help text. It is used for sorting rules.
+        x-label:
+          default: On sale?
+        type: boolean
+      c_kidsAge:
+        description: Kids Age used for search refinements
+        enum:
+        - '0010'
+        - '0020'
+        - '0030'
+        - '0040'
+        - '0050'
+        - '0060'
+        - '0070'
+        x-enum-labels:
+        - default: Infant (0-1 yr)
+        - default: Toddler (1-5 yrs)
+        - default: Youth (5-9 yrs)
+        - default: Junior (9-12 yrs)
+        - default: Newborn (1-6 mths)
+        - default: Infant (9 mnths - 3 yrs)
+        - default: Junior (4-12 yrs)
+        x-label:
+          default: Age
+        type: string
+      c_length:
+        description: This attribute is used for mens and womens pants lengths.
+        x-label:
+          default: Length
+        type: string
+      c_lensAperture:
+        x-label:
+          default: Lens Aperture
+        type: string
+      c_materialTest:
+        items:
+          enum:
+          - cotton
+          - polyester
+          - wool
+          x-enum-labels:
+          - default: Cotton
+          - default: Polyester
+          - default: Wool
+          type: string
+        x-label:
+          default: Material
+        type: array
+      c_mediaFormat:
+        description: Media Format
+        items:
+          enum:
+          - '0010'
+          - '0020'
+          - '0030'
+          - '0040'
+          - '0050'
+          - '0060'
+          - '0070'
+          - 0080
+          - 0090
+          - '0100'
+          x-enum-labels:
+          - default: MP3
+          - default: WMA
+          - default: JPEG
+          - default: WAV
+          - default: FM Tuner
+          - default: AAC
+          - default: WMP
+          - default: MPEG4
+          - default: AVC
+          - default: ASP
+          type: string
+        x-label:
+          default: Media Format
+        type: array
+      c_memorySize:
+        description: Memory Size
+        x-label:
+          default: Memory Size
+        type: string
+      c_memoryType:
+        items:
+          enum:
+          - '0010'
+          - '0020'
+          - '0030'
+          - '0040'
+          - '0050'
+          - '0060'
+          - '0070'
+          - 0080
+          - 0090
+          x-enum-labels:
+          - default: SD
+          - default: Memory Stick Pro DUO
+          - default: Compact Flash
+          - default: MMC
+          - default: SDHC
+          - default: CF Card
+          - default: External Media
+          - default: Micro SD
+          - default: Garmin Data Card
+          type: string
+        x-label:
+          default: Memory Type
+        type: array
+      c_musicStorage:
+        x-label:
+          default: Music Storage
+        type: string
+      c_opticalZoom:
+        x-label:
+          default: Optical Zoom
+        type: string
+      c_outerwearType:
+        description: Type of Outerwear for search refinement
+        enum:
+        - '0010'
+        - '0020'
+        - '0030'
+        - '0040'
+        - '0050'
+        - '0060'
+        - '0070'
+        - 0080
+        x-enum-labels:
+        - default: Waterproof
+        - default: Jackets
+        - default: Vest
+        - default: Pants
+        - default: Casual
+        - default: Sweater
+        - default: Outdoor
+        - default: Fleece
+        x-label:
+          default: Outerwear Type
+        type: string
+      c_portableAudioType:
+        items:
+          enum:
+          - '0010'
+          - '0020'
+          - '0030'
+          x-enum-labels:
+          - default: Audio
+          - default: Video
+          - default: Internet
+          type: string
+        x-label:
+          default: Portable Audio Type
+        type: array
+      c_refinementColor:
+        enum:
+        - beige
+        - black
+        - blue
+        - brown
+        - green
+        - grey
+        - miscellaneous
+        - navy
+        - orange
+        - pink
+        - purple
+        - red
+        - white
+        - yellow
+        x-enum-labels:
+        - default: Beige
+        - default: Black
+        - default: Blue
+        - default: Brown
+        - default: Green
+        - default: Grey
+        - default: Miscellaneous
+        - default: Navy
+        - default: Orange
+        - default: Pink
+        - default: Purple
+        - default: Red
+        - default: White
+        - default: Yellow
+        x-label:
+          default: Refinement Color
+        type: string
+      c_resolution:
+        x-label:
+          default: Resolution
+        type: string
+      c_sandalType:
+        description: Type of Sandal for search refinement
+        enum:
+        - '0010'
+        - '0020'
+        - '0030'
+        x-enum-labels:
+        - default: Sport
+        - default: Casual
+        - default: Thong
+        x-label:
+          default: Sandal Type
+        type: string
+      c_sheets:
+        description: test attribute
+        items:
+          enum:
+          - value1
+          - value2
+          - value3
+          x-enum-labels:
+          - default: Value 1
+          - default: Value 2
+          - default: Value 3
+          type: string
+        x-label:
+          default: Sheets
+        type: array
+      c_shoeType:
+        description: Type of Shoe for search refinements
+        enum:
+        - '0010'
+        - '0020'
+        - '0030'
+        - '0040'
+        - '0050'
+        - '0060'
+        - '0070'
+        - 0080
+        - 0090
+        - '0100'
+        - '0110'
+        x-enum-labels:
+        - default: Chukka
+        - default: Lace Up
+        - default: Slip On
+        - default: Clog
+        - default: Boat
+        - default: Oxford
+        - default: Loafer
+        - default: Waterproof
+        - default: Flats
+        - default: Ballerina
+        - default: Heeled
+        x-label:
+          default: Shoe Type
+        type: string
+      c_size:
+        description: This attribute is used for all footwear, apparel and accessory
+          sizing for men, women and kids products.
+        x-label:
+          default: Size
+        type: string
+      c_skinConcern:
+        items:
+          enum:
+          - comprehensive
+          - dryTight
+          - liftingLossFirm
+          x-enum-labels:
+          - default: Comprehensive Protection
+          - default: Dry, Tight Skin
+          - default: Lifting & Loss of Firmness
+          type: string
+        x-label:
+          default: Skin Concern
+        type: array
+      c_styleNumber:
+        x-label:
+          default: Style Number
+        type: string
+      c_tabDescription:
+        $ref: '#/definitions/markup_text'
+        x-label:
+          default: Description
+      c_tabDetails:
+        $ref: '#/definitions/markup_text'
+        x-label:
+          default: Details
+      c_topType:
+        description: Type of tops in clothing
+        x-label:
+          default: Top Type
+        type: string
+      c_tvSignalFormat:
+        x-label:
+          default: TV Signal Format
+        type: string
+      c_tvSize:
+        x-label:
+          default: Size
+        type: string
+      c_tvType:
+        enum:
+        - '0010'
+        - '0020'
+        - '0030'
+        - '0040'
+        x-enum-labels:
+        - default: Plasma
+        - default: LCD
+        - default: DLP
+        - default: Projection
+        x-label:
+          default: TV Type
+        type: string
+      c_tvWarranty:
+        x-label:
+          default: Extended Warranty
+        type: string
+      c_videoStorage:
+        x-label:
+          default: Video Storage
+        type: string
+      c_virtualTryOn:
+        description: Whether the product is available for virtual try on.
+        x-label:
+          default: Virtual Try On
+        type: boolean
+      c_waist:
+        description: Attribute used for apparel waist sizing.
+        x-label:
+          default: Waist
+        type: string
+      c_width:
+        description: This attribute is used for shoe widths for mens, womens and kids.
+        x-label:
+          default: Width
+        type: string
+      classification_category:
+        $ref: '#/definitions/catalog_category_id'
+        description: The classification category (default category) of the product
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      default_variant_id:
+        description: The ID of the product's default variant.
+        type: string
+      ean:
+        description: The European Article Number of the product.
+        x-label:
+          default: EAN
+        type: string
+      id:
+        description: The ID (SKU) of the product.
+        x-label:
+          default: ID
+          en: SKUAGE
+        maxLength: 100
+        minLength: 1
+        type: string
+      image:
+        $ref: '#/definitions/media_file'
+        description: The image(s) assigned to the product.
+        x-label:
+          default: Standard Image
+      image_groups:
+        description: The array of product image groups.
+        items:
+          $ref: '#/definitions/image_group'
+        type: array
+      in_stock:
+        description: The flag that indicates if the product is in stock, or not. This
+          is a calculated value.
+        type: boolean
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      link:
+        description: A link to the product.
+        type: string
+      localized_tax_class_id:
+        additionalProperties:
+          type: string
+        description: ''
+        format: localized
+        x-label:
+          default: Localized Tax Class
+        type: object
+      long_description:
+        additionalProperties:
+          $ref: '#/definitions/markup_text'
+        description: The localized long description of the product.
+        format: localized
+        x-label:
+          default: Product Details
+        type: object
+      manufacturer_name:
+        description: The name of the product's manufacturer.
+        x-label:
+          default: Manufacturer
+        type: string
+      manufacturer_sku:
+        description: The SKU of the product's manufacturer.
+        x-label:
+          default: Manufacturer Product ID
+        type: string
+      master:
+        $ref: '#/definitions/master'
+        description: The master of the product. This is applicable for product types
+          "variation_group" and "variant" only.
+      name:
+        additionalProperties:
+          type: string
+        description: The localized name of the product.
+        format: localized
+        x-label:
+          default: Name
+        type: object
+      online:
+        description: The flag that indicates if the product is online, or not. This
+          is a calculated value.
+        type: boolean
+      online_flag:
+        additionalProperties:
+          type: boolean
+        description: The site specific online status of the product.
+        format: site-specific
+        x-label:
+          default: Online
+        type: object
+      owning_catalog_id:
+        description: The ID of the catalog that owns the product.
+        type: string
+      owning_catalog_name:
+        additionalProperties:
+          type: string
+        description: The localized name of the catalog that owns the product.
+        format: localized
+        type: object
+      page_description:
+        additionalProperties:
+          type: string
+        description: The localized page description of the product.
+        format: localized
+        x-label:
+          default: Page Description
+        type: object
+      page_keywords:
+        additionalProperties:
+          type: string
+        description: The localized page keywords of the product.
+        format: localized
+        x-label:
+          default: Page Keywords
+        type: object
+      page_title:
+        additionalProperties:
+          type: string
+        description: The localized page title of the product.
+        format: localized
+        x-label:
+          default: Page Title
+        type: object
+      price:
+        description: The price of the product.
+        format: double
+        type: number
+      price_currency:
+        description: The currency code for product's price.
+        type: string
+      price_per_unit:
+        description: The price per unit of the product
+        format: double
+        type: number
+      primary_categories:
+        description: The catalog categories that are primary for the product
+        items:
+          $ref: '#/definitions/catalog_category_id'
+        type: array
+      primary_category_id:
+        description: The id of the products primary category.
+        type: string
+      product_bundles:
+        description: The array of product bundles which the product belongs to.
+        items:
+          $ref: '#/definitions/product'
+        type: array
+      product_options:
+        description: The array of product options. This is applicable for products
+          of type "option".
+        items:
+          $ref: '#/definitions/product_option'
+        type: array
+      product_sets:
+        description: The array of product sets which the product belongs to.
+        items:
+          $ref: '#/definitions/product'
+        type: array
+      searchable:
+        additionalProperties:
+          type: boolean
+        description: The site specific searchable status of the product.
+        format: site-specific
+        x-label:
+          default: Searchable
+        type: object
+      set_products:
+        description: The array of set products which the product includes.
+        items:
+          $ref: '#/definitions/product'
+        type: array
+      short_description:
+        additionalProperties:
+          $ref: '#/definitions/markup_text'
+        description: The localized short description of the product.
+        format: localized
+        x-label:
+          default: Description
+        type: object
+      tax_class_id:
+        description: The catalog categories that the product is assigned to
+        x-label:
+          default: Tax Class
+        type: string
+      type:
+        $ref: '#/definitions/product_type'
+        description: The type of the product. It can have one or more of the values
+          "item", "master", "variation_group", "variant", "bundle", and "set".
+      unit:
+        description: The sales unit of the product.
+        x-label:
+          default: Sales Unit
+        type: string
+      unit_measure:
+        description: The unitMeasure of the product.
+        x-label:
+          default: Unit Measure
+        type: string
+      unit_quantity:
+        description: The unitQuantity of the product.
+        format: double
+        x-label:
+          default: Unit Quantity
+        type: number
+      upc:
+        description: The Universal Product Code of the product.
+        x-label:
+          default: UPC
+        type: string
+      valid_from:
+        additionalProperties:
+          format: date-time
+          type: string
+        description: The time when product is valid from.
+        format: site-specific
+        x-label:
+          default: Online From
+        type: object
+      valid_to:
+        additionalProperties:
+          format: date-time
+          type: string
+        description: The time when product is valid to.
+        format: site-specific
+        x-label:
+          default: Online To
+        type: object
+      variants:
+        description: The array of variants of the product. This is applicable for
+          product types "master" and "variation_group" only.
+        items:
+          $ref: '#/definitions/variant'
+        type: array
+      variation_attributes:
+        description: "The sorted array of variation attributes assigned to the product.\
+          \ This is applicable for product types \"master\",\n \"variation_group\"\
+          \ and \"variant\" only."
+        items:
+          $ref: '#/definitions/variation_attribute'
+        type: array
+      variation_groups:
+        description: The array of variation groups in the product. This is applicable
+          for product type "master" only.
+        items:
+          $ref: '#/definitions/variation_group'
+        type: array
+      variation_values:
+        additionalProperties:
+          type: string
+        description: "The variation values selected for the product in variation attribute\
+          \ id and value pairs. This is applicable for product types \"variant\" and\n\
+          \ \"variation_group\" only."
+        type: object
+  image_group:
+    description: Document representing an image group containing a list of images
+      for a particular view type and an optional variation value.
+    properties:
+      images:
+        description: The images of the image group.
+        items:
+          $ref: '#/definitions/media_file'
+        type: array
+      variation_attributes:
+        description: Returns a list of variation attributes applying to this image
+          group.
+        items:
+          $ref: '#/definitions/variation_attribute'
+        type: array
+      view_type:
+        description: The image view type.
+        type: string
+  media_file:
+    properties:
+      abs_url:
+        description: The absolute URL with request protocol (read only)
+        type: string
+      alt:
+        additionalProperties:
+          type: string
+        description: The alternative image text
+        format: localized
+        type: object
+      dis_base_url:
+        description: The DIS base URL only for product images
+        type: string
+      path:
+        description: "The raw media file path\n (only this needs to be provided in\
+          \ update request)"
+        type: string
+      title:
+        additionalProperties:
+          type: string
+        description: The image title
+        format: localized
+        type: object
+  variation_attribute_value:
+    description: Document representing a variation attribute value.
+    properties:
+      description:
+        additionalProperties:
+          type: string
+        description: The localized description of the variation value.
+        format: localized
+        type: object
+      image:
+        $ref: '#/definitions/media_file'
+        description: The first product image for the configured viewtype and this
+          variation value.
+      image_swatch:
+        $ref: '#/definitions/media_file'
+        description: The first product image for the configured viewtype and this
+          variation value. (typically the swatch image)
+      link:
+        description: ''
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation value.
+        format: localized
+        type: object
+      orderable:
+        description: A flag indicating whether at least one variant with this variation
+          attribute value is available to sell.
+        type: boolean
+      position:
+        description: The position of the value among all values of a variation attribute.
+        format: double
+        type: number
+      value:
+        description: The actual variation value.
+        minLength: 1
+        type: string
+    required:
+    - value
+  markup_text:
+    properties:
+      markup:
+        description: The rendered HTML (read only)
+        type: string
+      source:
+        description: "The raw markup text\n (only this needs to be provided in update\
+          \ request)"
+        type: string
+  product_option:
+    description: Document representing a product option
+    properties:
+      custom_name:
+        additionalProperties:
+          type: string
+        description: The localized custom name of the product option.
+        format: localized
+        type: object
+      default_product_option_value:
+        description: The default product option value.
+        type: string
+      description:
+        additionalProperties:
+          type: string
+        description: The localized description of the product option.
+        format: localized
+        type: object
+      id:
+        description: The object attribute definition id which is also the identifier
+          for the product option.
+        minLength: 1
+        type: string
+      image:
+        $ref: '#/definitions/media_file'
+        description: The image assigned to the product option.
+      link:
+        description: The URL link to the product option.
+        type: string
+      name:
+        description: The name of the object attribute definition.
+        type: string
+      selected_option_value:
+        description: The selected option value of the product option.
+        type: string
+      shared:
+        description: The flag that indicates if the product option is shared or local.
+        type: boolean
+      sorting_mode:
+        description: The sorting mode for the product option values.
+        enum:
+        - byexplicitorder
+        - byoptionprice
+        type: string
+      values:
+        description: The sorted array of values of the product option.
+        items:
+          $ref: '#/definitions/product_option_value'
+        type: array
+  money:
+    properties:
+      currency_mnemonic:
+        description: The mnemonic for the money.
+        type: string
+      value:
+        description: The value for the money.
+        format: double
+        type: number
+  product_type:
+    description: Document representing a product type.
+    properties:
+      bundle:
+        description: A flag indicating whether the product is a bundle.
+        type: boolean
+      bundled:
+        description: A flag indicating whether the product is bundled.
+        type: boolean
+      item:
+        description: A flag indicating whether the product is a standard item.
+        type: boolean
+      master:
+        description: A flag indicating whether the product is a master.
+        type: boolean
+      option:
+        description: A flag indicating whether the product is an option.
+        type: boolean
+      part_of_product_set:
+        description: A flag indicating whether the product is part of product set.
+        type: boolean
+      part_of_retail_set:
+        description: A flag indicating whether the product is part of retail set.
+        type: boolean
+      retail_set:
+        description: A flag indicating whether the product is a retail set.
+        type: boolean
+      set:
+        description: A flag indicating whether the product is a set.
+        type: boolean
+      variant:
+        description: A flag indicating whether the product is a variant.
+        type: boolean
+      variation_group:
+        description: A flag indicating whether the product is a variation group.
+        type: boolean
+  variation_attribute:
+    description: Document representing a variation attribute.
+    properties:
+      attribute_definition_id:
+        description: The id of the requested attribute definition.
+        type: string
+      attribute_definition_name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation attribute definition.
+        format: localized
+        type: object
+      default_value:
+        description: default variation attribute value
+        type: string
+      id:
+        description: The id of the variation attribute.
+        minLength: 1
+        type: string
+      link:
+        description: URL that is used to get this instance
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation attribute.
+        format: localized
+        type: object
+      shared:
+        description: Returns the value of attribute 'shared' if attribute is local
+          or shared
+        type: boolean
+      slicing:
+        description: Returns the value of attribute 'slicing'.
+        type: boolean
+      values:
+        description: The sorted array of variation values. This array can be empty.
+        items:
+          $ref: '#/definitions/variation_attribute_value'
+        type: array
+      variation_attribute_type:
+        description: variation attribute type
+        enum:
+        - string
+        - int
+        - unknown
+        type: string
+    required:
+    - attribute_definition_id
+  catalog_category_id:
+    description: Document representing a catalog category id.
+    properties:
+      catalog_id:
+        description: The id of the catalog that owns the category.
+        maxLength: 256
+        minLength: 1
+        type: string
+      category_id:
+        description: The id of the category.
+        maxLength: 256
+        minLength: 1
+        type: string
+  product_option_value:
+    description: Document representing a product option Value
+    properties:
+      default_product_option_value:
+        description: Flag indicating if the product option value is the default value
+          for the product option.
+        type: boolean
+      id:
+        description: The id of the product option value.
+        minLength: 1
+        type: string
+      link:
+        description: The URL link to the product option value.
+        type: string
+      option_prices:
+        description: The list of prices in the product option value.
+        items:
+          $ref: '#/definitions/money'
+        type: array
+      sku_extension:
+        description: The sku extension of the product option value.
+        type: string
+      value:
+        additionalProperties:
+          type: string
+        description: The localized value of the product option.
+        format: localized
+        type: object
+  category_product_assignment:
+    description: Document representing a category product assignment.
+    properties:
+      catalog_id:
+        description: The id of the catalog.
+        maxLength: 256
+        minLength: 1
+        type: string
+      category_id:
+        description: The id of the category.
+        maxLength: 256
+        minLength: 1
+        type: string
+      creation_date:
+        format: date-time
+        type: string
+      last_modified:
+        format: date-time
+        type: string
+      link:
+        description: The URL used to get the product category assignment.
+        type: string
+      owning_catalog_name:
+        additionalProperties:
+          type: string
+        description: The name of the catalog that owns the product.
+        format: localized
+        type: object
+      position:
+        description: The position of product category assignment.
+        format: double
+        type: number
+      product:
+        $ref: '#/definitions/product'
+        description: The product that is assigned to the category.
+      product_id:
+        description: The id of the Product.
+        maxLength: 256
+        minLength: 1
+        type: string
+      product_name:
+        additionalProperties:
+          type: string
+        description: The name of the product.
+        format: localized
+        type: object
+  variation_group:
+    description: Document representing a variation group.
+    properties:
+      link:
+        description: The URL addressing the product.
+        type: string
+      orderable:
+        description: A flag indicating whether the variation group is orderable.
+        type: boolean
+      price:
+        description: The sales price of the variation group.
+        format: double
+        type: number
+      price_per_unit:
+        description: The sales price per unit of the variation group.
+        format: double
+        type: number
+      product_id:
+        description: The id (SKU) of the variation group.
+        maxLength: 100
+        minLength: 1
+        type: string
+      variation_values:
+        additionalProperties:
+          type: string
+        description: The actual variation attribute id - value pairs.
+        type: object
+  variant:
+    description: Document representing a product variation.
+    properties:
+      ats:
+        description: Inventory "Available to Sell" of the product.
+        format: double
+        type: number
+      default_product_variation:
+        description: ''
+        type: boolean
+      image:
+        $ref: '#/definitions/media_file'
+        description: URL to the preview image.
+      in_stock:
+        description: '`true` if the product is in stock, or `false` if not.'
+        type: boolean
+      link:
+        description: The URL addressing the product.
+        type: string
+      online:
+        description: "If the product is currently online.\n `true` if online\n `false`\
+          \ if not"
+        type: boolean
+      orderable:
+        description: A flag indicating whether the variant is orderable.
+        type: boolean
+      price:
+        description: The sales price of the variant.
+        format: double
+        type: number
+      price_currency:
+        description: Currency code for the price of the product.
+        type: string
+      price_per_unit:
+        description: The sales price of the variant.
+        format: double
+        type: number
+      product_id:
+        description: The id (SKU) of the variant.
+        maxLength: 100
+        minLength: 1
+        type: string
+      searchable:
+        additionalProperties:
+          type: boolean
+        description: ''
+        format: site-specific
+        type: object
+      variation_attributes:
+        description: variation attributes
+        items:
+          $ref: '#/definitions/variation_attribute'
+        type: array
+      variation_values:
+        additionalProperties:
+          type: string
+        description: The actual variation attribute id - value pairs.
+        type: object
+    required:
+    - product_id
+  master:
+    description: Document representing a variation master.
+    properties:
+      link:
+        description: The URL addressing the master product.
+        type: string
+      master_id:
+        description: The id (SKU) of the master product.
+        maxLength: 100
+        minLength: 1
+        type: string
+      orderable:
+        description: A flag indicating whether at least one of the variants is orderable.
+        type: boolean
+      price:
+        description: The minimum sales price of the related variants.
+        format: double
+        type: number
+      price_max:
+        description: The maximum sales of related variants.
+        format: double
+        type: number
+      price_per_unit:
+        description: The minimum sales price per unit of the related variants.
+        format: double
+        type: number
+      price_per_unit_max:
+        description: The maximum sales price per unit of the related variants.
+        format: double
+        type: number
+      prices:
+        additionalProperties:
+          format: double
+          type: number
+        type: object
+    required:
+    - master_id
+paths:
+  /catalogs/{catalog_id}/categories/{category_id}/products/{product_id}:
+    delete:
+      description: "**Removes** a category product assignment;\n \n \n For example,\
+        \ if we have products A, B, C at positions 1, 2, 7.5 and delete assignment\
+        \ for product B, \n this will end up the products A, B, C at positions 1,\
+        \ null, 7.5."
+      operationId: deleteCatalogsByIDCategoriesByIDProductsByID
+      parameters:
+      - description: The catalog of the assignment.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the requested category.
+        in: path
+        minLength: 1
+        name: category_id
+        required: true
+        type: string
+      - description: The id of the requested product to un-assign.
+        in: path
+        minLength: 1
+        name: product_id
+        required: true
+        type: string
+      responses:
+        '204':
+          description: ''
+        '404':
+          description: '`CategoryNotFoundException` - Thrown if the category does
+            not exist matching the given id. or `CatalogNotFoundException` - Thrown
+            if the catalog does not exist matching the given id.'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    get:
+      description: "Retrieves category product assignment information.\n \n Expands\
+        \ that can be applied for the get request\n \n - product_base - String\n -\
+        \ product_images - String - to fetch image groups specified for the given\
+        \ product\n - product_all_images - String - to fetch image groups specified\
+        \ for the given product plus images for its variants and variation groups\n\
+        \ "
+      operationId: getCatalogsByIDCategoriesByIDProductsByID
+      parameters:
+      - description: The catalog of the assignment.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the requested category.
+        in: path
+        minLength: 1
+        name: category_id
+        required: true
+        type: string
+      - description: The id (SKU) of the requested assigned product.
+        in: path
+        minLength: 1
+        name: product_id
+        required: true
+        type: string
+      - description: The site context.
+        in: query
+        name: site_id
+        type: string
+      - description: The List of expansion values applied to the product associated
+          to the assignment.
+        in: query
+        items:
+          type: string
+        name: expand
+        type: array
+      - description: The selector for the get. If not passed, then the defaultSelector
+          will be used instead.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/category_product_assignment'
+        '404':
+          description: '`CategoryNotFoundException` - Thrown if the category does
+            not exist matching the given id. or `CatalogNotFoundException` - Thrown
+            if the catalog does not exist matching the given id. or `ProductNotFoundException`
+            - Thrown if the product does not exist matching the given id. or `CategoryProductAssignmentNotFoundException`
+            - Thrown if the category product assignment does not exist matching the
+            given ids.'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    patch:
+      description: "**Updates** the category product assignment with the specified\
+        \ information, such as position. \n  As the assigned position n is a **normalized\
+        \ target position**, we'll make sure that the product is assigned\n to a position\
+        \ so that the order of positions are maintained. \n\n For example, if we have\
+        \ products A, B, C, D at positions 1, 2, 3, 4 and update product A with new\
+        \ position 3, \n the end result is B, C, A, D with order of positions 1, 2,\
+        \ 3, 4. If we then update product C to no position,\n the end result is B,\
+        \ A, D, C with order of positions 1, 2, 3, null.\n\n If there are n existing\
+        \ positioned assignment, updating product to position >= n will end with new\
+        \ assignment with position such that the order of positions is maintained."
+      operationId: patchCatalogsByIDCategoriesByIDProductsByID
+      parameters:
+      - description: The id of the requested catalog to which the product is assigned.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the requested category to which the product is assigned.
+        in: path
+        minLength: 1
+        name: category_id
+        required: true
+        type: string
+      - description: The id (SKU) of the requested assigned product.
+        in: path
+        minLength: 1
+        name: product_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/category_product_assignment'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/category_product_assignment'
+        '404':
+          description: '`CategoryNotFoundException` - Thrown if the category does
+            not exist matching the given id. or `CatalogNotFoundException` - Thrown
+            if the catalog does not exist matching the given id. or `ProductNotFoundException`
+            - Thrown if the product does not exist matching the given id. or `CategoryProductAssignmentNotFoundException`
+            - Thrown if the category product assignment does not exist.'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    put:
+      description: "**Creates** a category product assignment using the information\
+        \ provided; \n \n As the assigned position n is a **normalized target position**,\
+        \ we'll make sure that the product is assigned\n to a position so that the\
+        \ order of positions are maintained. \n \n For example, product A, B, C at\
+        \ position 1, 2, 3. product D is assigned to\n position 2, the end result\
+        \ is A, D, B, C with order of positions 1, 2, 3, 4;\n \n If there are n existing\
+        \ positioned assignment, assigning a new product to position >= n+1 will end\n\
+        \ with new assignment with position n+1."
+      operationId: putCatalogsByIDCategoriesByIDProductsByID
+      parameters:
+      - description: The id of the requested catalog to which to assign the product.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the requested category to which to assign the product.
+        in: path
+        minLength: 1
+        name: category_id
+        required: true
+        type: string
+      - description: The id (SKU) of the requested product to assign.
+        in: path
+        minLength: 1
+        name: product_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/category_product_assignment'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/category_product_assignment'
+        '400':
+          description: '`IdConflictException` - if the Id in request is not the same
+            as the ID in document.'
+        '404':
+          description: '`CategoryNotFoundException` - Thrown if the category does
+            not exist matching the given id. or `CatalogNotFoundException` - Thrown
+            if the catalog does not exist matching the given id. or `ProductNotFoundException`
+            - Thrown if the product does not exist matching the given id.'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs

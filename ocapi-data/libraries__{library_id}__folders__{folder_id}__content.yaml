@@ -1,0 +1,329 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  content_asset_result:
+    description: Result document containing an array of content assets.
+    properties:
+      count:
+        description: The number of search results in the current page.
+        format: int32
+        type: integer
+      data:
+        description: The returned objects.
+        items:
+          type: object
+        type: array
+      hits:
+        description: The sorted array of search hits. This array can be empty.
+        items:
+          $ref: '#/definitions/content_asset'
+        type: array
+      next:
+        description: The URL of the next result page.
+        type: string
+      previous:
+        description: The URL of the previous result page.
+        type: string
+      select:
+        description: The fields that you want to select.
+        type: string
+      start:
+        description: The zero-based index of the first search result to include in
+          the document.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of search results.
+        format: int32
+        type: integer
+  media_file:
+    properties:
+      abs_url:
+        description: The absolute URL with request protocol (read only)
+        type: string
+      alt:
+        additionalProperties:
+          type: string
+        description: The alternative image text
+        format: localized
+        type: object
+      dis_base_url:
+        description: The DIS base URL only for product images
+        type: string
+      path:
+        description: "The raw media file path\n (only this needs to be provided in\
+          \ update request)"
+        type: string
+      title:
+        additionalProperties:
+          type: string
+        description: The image title
+        format: localized
+        type: object
+  content_asset:
+    description: Document representing a content asset.
+    properties:
+      c_Year:
+        x-label:
+          default: Year
+        type: string
+      c_body:
+        additionalProperties:
+          $ref: '#/definitions/markup_text'
+        format: localized
+        x-label:
+          default: Body
+        type: object
+      c_customCSSFile:
+        $ref: '#/definitions/media_file'
+        description: Use this attribute to apply custom styles for this content asset.
+        x-label:
+          default: Custom CSS File
+      classification_folder_id:
+        description: The ID of the classification folder. It is only part of the response,
+          if the assignment from  this content asset to the folder is marked as 'default'.
+          The property is read-only. To  set the classification folder just create/update
+          an assignment between this content asset and  a folder and mark it as 'default'.
+          See details in  /libraries/{library_id}/folder_assignments/{content_id}/{folder_id}
+          resource.
+        type: string
+      classification_folder_link:
+        description: The link to the classification folder. It is only part of the
+          response, if the assignment from  this content asset to the folder is marked
+          as 'default'. The property is read-only. To  set the classification folder
+          just create/update an assignment between this content asset and  a folder
+          and mark it as 'default'. See details in  /libraries/{library_id}/folder_assignments/{content_id}/{folder_id}
+          resource.
+        type: string
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      description:
+        additionalProperties:
+          type: string
+        description: The localized content asset description.
+        format: localized
+        x-label:
+          default: Description
+        type: object
+      id:
+        description: The id of the content asset.
+        x-label:
+          default: ID
+        maxLength: 256
+        minLength: 1
+        type: string
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      link:
+        description: The link to the content asset resource.
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized content asset name.
+        format: localized
+        x-label:
+          default: Name
+        type: object
+      online:
+        additionalProperties:
+          type: boolean
+        description: Is the asset online?
+        format: site-specific
+        x-label:
+          default: Online
+        type: object
+      page_description:
+        additionalProperties:
+          type: string
+        description: The localized content asset page description.
+        format: localized
+        x-label:
+          default: Page Description
+        type: object
+      page_keywords:
+        additionalProperties:
+          type: string
+        description: The localized content asset page keywords.
+        format: localized
+        x-label:
+          default: Page Keywords
+        type: object
+      page_title:
+        additionalProperties:
+          type: string
+        description: The localized content asset page title.
+        format: localized
+        x-label:
+          default: Page Title
+        type: object
+      page_url:
+        additionalProperties:
+          type: string
+        description: The localized content asset page url.
+        format: localized
+        x-label:
+          default: Page URL
+        type: object
+      searchable:
+        additionalProperties:
+          type: boolean
+        description: Is the asset searchable?
+        format: site-specific
+        type: object
+      site_map_change_frequency:
+        additionalProperties:
+          enum:
+          - always
+          - daily
+          - hourly
+          - monthly
+          - never
+          - weekly
+          - yearly
+          x-enum-labels:
+          - default: always
+          - default: daily
+          - default: hourly
+          - default: monthly
+          - default: never
+          - default: weekly
+          - default: yearly
+          type: string
+        description: The content assets change frequency needed for the sitemap creation  (always,
+          hourly, daily, weekly, monthly, yearly, never).
+        format: site-specific
+        x-label:
+          default: Change Frequency
+        type: object
+      site_map_included:
+        additionalProperties:
+          enum:
+          - 0
+          - 1
+          x-enum-labels:
+          - default: 'NO'
+          - default: 'YES'
+          format: int32
+          maximum: 1
+          minimum: 0
+          type: integer
+        description: The status if the content asset is included into the sitemap
+          (either 0 or  1).
+        format: site-specific
+        x-label:
+          default: Included
+        type: object
+      site_map_priority:
+        additionalProperties:
+          format: double
+          maximum: 1
+          type: number
+        description: The content assets priority needed for the sitemap creation (0.0
+          for no  priority defined).
+        format: site-specific
+        x-label:
+          default: Priority
+        type: object
+      template:
+        description: The rendering template.
+        x-label:
+          default: Rendering Template
+        type: string
+  markup_text:
+    properties:
+      markup:
+        description: The rendered HTML (read only)
+        type: string
+      source:
+        description: "The raw markup text\n (only this needs to be provided in update\
+          \ request)"
+        type: string
+paths:
+  /libraries/{library_id}/folders/{folder_id}/content:
+    get:
+      description: Action to get all assigned content assets of a folder.
+      operationId: getLibrariesByIDFoldersByIDContent
+      parameters:
+      - description: ID of the shared library or the site-id in case of a private
+          library.
+        in: path
+        maxLength: 256
+        minLength: 1
+        name: library_id
+        required: true
+        type: string
+      - description: ID of a target folder.
+        in: path
+        maxLength: 256
+        minLength: 1
+        name: folder_id
+        required: true
+        type: string
+      - description: The result set index to return the first instance for. Default
+          value is 0.
+        format: int32
+        in: query
+        minimum: 0
+        name: start
+        type: integer
+      - description: The maximum number of instances per request. Default value is
+          25.
+        format: int32
+        in: query
+        maximum: 200
+        minimum: 1
+        name: count
+        type: integer
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/content_asset_result'
+        '404':
+          description: '`LibraryNotFoundException` - Indicates that library with the
+            given id is unknown. or `FolderNotFoundException` - Indicates that the
+            folder with the given id is unknown.'
+      security:
+      - oauth2_application: []
+      tags:
+      - libraries

@@ -1,0 +1,74 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  cartridge_path_api_response:
+    description: Response of cartridge path related operation
+    properties:
+      cartridges:
+        description: Updated cartridge path
+        type: string
+      site_id:
+        description: Site id
+        type: string
+paths:
+  /sites/{site_id}/cartridges/{cartridge_name}:
+    delete:
+      description: Remove a cartridge from cartridge path.
+      operationId: deleteSitesByIDCartridgesByID
+      parameters:
+      - description: ID of the site.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: request body
+        in: path
+        minLength: 1
+        name: cartridge_name
+        required: true
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/cartridge_path_api_response'
+        '400':
+          description: '`InvalidOperationException` - It indicates either the cartridge
+            doesn''t exist in cartridge path or the cartridge can not be deleted (e.g.
+            System Cartridge).'
+        '404':
+          description: '`SiteNotFoundException` - Indicates that site specified with
+            the given id is unknown.'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

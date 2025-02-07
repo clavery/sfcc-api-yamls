@@ -1,0 +1,422 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  variant_search_result:
+    description: Document that represents a search on certificates and keys.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        items:
+          type: object
+        type: array
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        minimum: 0
+        type: integer
+      expand:
+        description: List of expansions to be applied to each search results. Expands
+          are optional
+        items:
+          type: string
+        type: array
+      hits:
+        description: The hits from the search
+        items:
+          $ref: '#/definitions/variant'
+        type: array
+      next:
+        $ref: '#/definitions/result_page'
+        description: The URL of the next result page.
+      previous:
+        $ref: '#/definitions/result_page'
+        description: The URL of the previous result page.
+      query:
+        $ref: '#/definitions/query'
+        description: The query passed into the search
+        x-sub_types:
+          nested_query: '#/definitions/nested_query'
+          filtered_query: '#/definitions/filtered_query'
+          text_query: '#/definitions/text_query'
+          match_all_query: '#/definitions/match_all_query'
+          term_query: '#/definitions/term_query'
+          bool_query: '#/definitions/bool_query'
+      select:
+        description: The fields that you want to select.
+        type: string
+      sorts:
+        description: The list of sort clauses configured for the search request. Sort
+          clauses are optional.
+        items:
+          $ref: '#/definitions/sort'
+        type: array
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+  media_file:
+    properties:
+      abs_url:
+        description: The absolute URL with request protocol (read only)
+        type: string
+      alt:
+        additionalProperties:
+          type: string
+        description: The alternative image text
+        format: localized
+        type: object
+      dis_base_url:
+        description: The DIS base URL only for product images
+        type: string
+      path:
+        description: "The raw media file path\n (only this needs to be provided in\
+          \ update request)"
+        type: string
+      title:
+        additionalProperties:
+          type: string
+        description: The image title
+        format: localized
+        type: object
+  variation_attribute_value:
+    description: Document representing a variation attribute value.
+    properties:
+      description:
+        additionalProperties:
+          type: string
+        description: The localized description of the variation value.
+        format: localized
+        type: object
+      image:
+        $ref: '#/definitions/media_file'
+        description: The first product image for the configured viewtype and this
+          variation value.
+      image_swatch:
+        $ref: '#/definitions/media_file'
+        description: The first product image for the configured viewtype and this
+          variation value. (typically the swatch image)
+      link:
+        description: ''
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation value.
+        format: localized
+        type: object
+      orderable:
+        description: A flag indicating whether at least one variant with this variation
+          attribute value is available to sell.
+        type: boolean
+      position:
+        description: The position of the value among all values of a variation attribute.
+        format: double
+        type: number
+      value:
+        description: The actual variation value.
+        minLength: 1
+        type: string
+    required:
+    - value
+  result_page:
+    description: Data that can be used to get the next and previous page of a Data
+      API results object.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        type: integer
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        type: integer
+  query:
+    description: "Document representing a query. A query contains a set of objects\
+      \ that define criteria\n used to select records. A query can contain one of\
+      \ the following:\n"
+  variation_attribute:
+    description: Document representing a variation attribute.
+    properties:
+      attribute_definition_id:
+        description: The id of the requested attribute definition.
+        type: string
+      attribute_definition_name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation attribute definition.
+        format: localized
+        type: object
+      default_value:
+        description: default variation attribute value
+        type: string
+      id:
+        description: The id of the variation attribute.
+        minLength: 1
+        type: string
+      link:
+        description: URL that is used to get this instance
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation attribute.
+        format: localized
+        type: object
+      shared:
+        description: Returns the value of attribute 'shared' if attribute is local
+          or shared
+        type: boolean
+      slicing:
+        description: Returns the value of attribute 'slicing'.
+        type: boolean
+      values:
+        description: The sorted array of variation values. This array can be empty.
+        items:
+          $ref: '#/definitions/variation_attribute_value'
+        type: array
+      variation_attribute_type:
+        description: variation attribute type
+        enum:
+        - string
+        - int
+        - unknown
+        type: string
+    required:
+    - attribute_definition_id
+  search_request:
+    description: Document representing a search request for retrieving items within
+      the Data API. The query is a potentially complex set of expressions. The fields
+      that each query supports are defined within the search resource.
+    properties:
+      count:
+        description: The number of returned documents
+        format: int32
+        maximum: 200
+        minimum: 1
+        type: integer
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        minimum: 0
+        type: integer
+      expand:
+        description: List of expansions to be applied to each search results. Expands
+          are optional
+        items:
+          type: string
+        type: array
+      query:
+        $ref: '#/definitions/query'
+        description: The query to apply
+        x-sub_types:
+          nested_query: '#/definitions/nested_query'
+          filtered_query: '#/definitions/filtered_query'
+          text_query: '#/definitions/text_query'
+          match_all_query: '#/definitions/match_all_query'
+          term_query: '#/definitions/term_query'
+          bool_query: '#/definitions/bool_query'
+      select:
+        description: The field to be selected.
+        type: string
+      sorts:
+        description: The list of sort clauses configured for the search request. Sort
+          clauses are optional.
+        items:
+          $ref: '#/definitions/sort'
+        type: array
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+    required:
+    - query
+  sort:
+    description: Document representing a sort request.
+    properties:
+      field:
+        description: The name of the field to sort on.
+        type: string
+      sort_order:
+        description: The sort order to be applied when sorting. When omitted, the
+          default sort order (ASC) is used.
+        enum:
+        - asc
+        - desc
+        type: string
+    required:
+    - field
+  variant:
+    description: Document representing a product variation.
+    properties:
+      ats:
+        description: Inventory "Available to Sell" of the product.
+        format: double
+        type: number
+      default_product_variation:
+        description: ''
+        type: boolean
+      image:
+        $ref: '#/definitions/media_file'
+        description: URL to the preview image.
+      in_stock:
+        description: '`true` if the product is in stock, or `false` if not.'
+        type: boolean
+      link:
+        description: The URL addressing the product.
+        type: string
+      online:
+        description: "If the product is currently online.\n `true` if online\n `false`\
+          \ if not"
+        type: boolean
+      orderable:
+        description: A flag indicating whether the variant is orderable.
+        type: boolean
+      price:
+        description: The sales price of the variant.
+        format: double
+        type: number
+      price_currency:
+        description: Currency code for the price of the product.
+        type: string
+      price_per_unit:
+        description: The sales price of the variant.
+        format: double
+        type: number
+      product_id:
+        description: The id (SKU) of the variant.
+        maxLength: 100
+        minLength: 1
+        type: string
+      searchable:
+        additionalProperties:
+          type: boolean
+        description: ''
+        format: site-specific
+        type: object
+      variation_attributes:
+        description: variation attributes
+        items:
+          $ref: '#/definitions/variation_attribute'
+        type: array
+      variation_values:
+        additionalProperties:
+          type: string
+        description: The actual variation attribute id - value pairs.
+        type: object
+    required:
+    - product_id
+paths:
+  /products/{id}/variant_search:
+    post:
+      description: "Searches product variations for master product or variation group\
+        \ product.\n \n The query attribute specifies a complex query that can be\
+        \ used to narrow down the search. This is the list\n of searchable attributes:\n\
+        \ \n - id - String\n - product_id - String\n - name - String\n - online -\
+        \ SiteSpecific Boolean\n - in_stock - Boolean \n - searchable - SiteSpecific\
+        \ Boolean \n - ats - Actual available quantity to sell - Double \n - variation_attribute.ATTRIBUTE_ID\
+        \ (Ex:variation_attribute.color) - String\n \n Sortable Fields:\n \n - id\
+        \ - String\n - product_id - String\n - name - String\n - online - SiteSpecific\
+        \ Boolean\n - in_stock - Boolean \n - searchable - SiteSpecific Boolean \n\
+        \ - ats - Actual available quantity to sell - Double \n \n\n Note:\n The calculated\
+        \ value of \"online\" and \"searchable\" is used in the search/sort.\n A search/sort\
+        \ by the the site specific attributes require the Site ID query parameter\
+        \ to be set.\n They are \"online\", \"in_stock\", \"searchable\" and \"ats\"\
+        .\n  We assume that every field that starts with variation_attribute. is searchable\
+        \ and dot is followed by ATTRIBUTE_ID\".\n\n\n The list of expansions to retrieve\
+        \ product information. The expand values available are:\n \t\t  \n \t\t\t\
+        - _base - Basic product information is retrieved. This expand is included\
+        \ by default.\n \t\t\t- all - All product information including the following\
+        \ properties are retrieved:\n        \t\n        \t\t- image\n        \t\t\
+        - price - site_id has to be provided to see this property\n        \t\t- price_currency\
+        \ - site_id has to be provided to see this property\n        \t\n \t\t\t-\
+        \ availability - Information related to the availability of the product variation.\
+        \  This expand is not included by default.\n        \t\n        \t\t- ats\
+        \ - site_id has to be provided to see this property\n        \t\t- in_stock\
+        \ - site_id has to be provided to see this property\n        \t\t- online\
+        \ - site_id has to be provided to see this property\n        \t\t- searchable\n\
+        \        \t\n          - variations - Information related to product variation\
+        \ is retrieved. This expand is included by default.\n \t\t\t- attributes -\
+        \ Information related to product variation attributes is retrieved. This expand\
+        \ is not included by default.\n \t\t  "
+      operationId: postProductsByIDVariantSearch
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/search_request'
+      - description: The product id of master product or variation group product
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: The id of the site to get site specific product attributes.
+        in: query
+        name: site_id
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variant_search_result'
+        '400':
+          description: '`MalformedSearchParameterException` - Thrown if the query
+            is ill-formed. or `ProductNotMasterGroupException` - Thrown if the id
+            is not the product id of a Variation Master product or Variation Group
+            product. or `SiteIdMissingForSiteSpecificFilterException` - Thrown if
+            the Site ID query parameter is missing in the search of Variants by a
+            site-specific product attribute.'
+        '404':
+          description: '`ProductNotFoundException` - Thrown if the product is not
+            found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - products

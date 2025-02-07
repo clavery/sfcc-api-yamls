@@ -1,0 +1,160 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  site:
+    description: Document representing a site.
+    properties:
+      cartridges:
+        description: The cartridge Path of the site
+        type: string
+      creation_date:
+        format: date-time
+        type: string
+      customer_list_link:
+        $ref: '#/definitions/customer_list_link'
+        description: The link to the customer list.
+      description:
+        additionalProperties:
+          type: string
+        description: The description of this site.
+        format: localized
+        type: object
+      display_name:
+        additionalProperties:
+          type: string
+        description: The display name entered by the user.
+        format: localized
+        type: object
+      id:
+        description: The id of this site.
+        minLength: 1
+        type: string
+      in_deletion:
+        description: The deletion status of this site, true if in deletion
+        type: boolean
+      last_modified:
+        format: date-time
+        type: string
+      link:
+        description: A link directly to the site
+        type: string
+      storefront_status:
+        description: ''
+        enum:
+        - online
+        - maintenance
+        - to_be_deleted
+        - protected
+        type: string
+    required:
+    - id
+  customer_list_link:
+    description: Document representing a link to a customer list.
+    properties:
+      customer_list_id:
+        description: The customerlist id.
+        type: string
+      link:
+        description: The target of the link.
+        type: string
+      title:
+        additionalProperties:
+          type: string
+        description: The link title.
+        format: localized
+        type: object
+  sites:
+    description: Document representing an unfiltered list of sites.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        description: ''
+        items:
+          $ref: '#/definitions/site'
+        type: array
+      expand:
+        description: The list of expands set for the search request. Expands are optional.
+        items:
+          type: string
+        type: array
+      next:
+        description: The URL of the next result page.
+        type: string
+      previous:
+        description: The URL of the previous result page.
+        type: string
+      select:
+        description: The fields that you want to select.
+        type: string
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+paths:
+  /sites:
+    get:
+      description: Action to get all existing sites.
+      operationId: getSites
+      parameters:
+      - description: Optional start index for retrieving the items from a given index
+          (default 0).
+        format: int32
+        in: query
+        name: start
+        type: integer
+      - description: Optional count for retrieving only a subset of the items (default
+          is 25).
+        format: int32
+        in: query
+        name: count
+        type: integer
+      - description: The property selector.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/sites'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

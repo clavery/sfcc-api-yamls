@@ -1,0 +1,484 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  path_record:
+    description: Document representing most basic info (id and name) of a category
+      or catalog.
+    properties:
+      id:
+        description: The id of the category path.
+        x-label:
+          default: ID
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The name of the category path.
+        format: localized
+        x-label:
+          default: Name
+        type: object
+  category:
+    description: Document representing a category.
+    properties:
+      c_alternativeUrl:
+        $ref: '#/definitions/markup_text'
+        description: 'Renders an alternative URL in main navigation. Uses Commerce
+          Cloud content url notation. For example: $url(''Account-Show'')$ or normal
+          URL http://xchange.demandware.com'
+        x-label:
+          default: Alternative URL
+      c_catBannerID:
+        description: Used to define the content asset used to populate a grid page
+          banner for a category. This value is applied to all sub-category navigation
+          (cascading) if no specific catBannerID has been defined for  a sub-category.
+        x-label:
+          default: Category Banner ID
+        type: string
+      c_customCSSFile:
+        $ref: '#/definitions/media_file'
+        description: Use this attribute to apply custom styles for this category.
+        x-label:
+          default: Custom CSS File
+      c_enableCompare:
+        description: Used to define if/when the Compare feature is to be visualized
+          in the storefront based on navigation. If enableCompare = FALSE, no Compare
+          checkboxes will be displayed in the grid view. If enableCompare = TRUE,
+          the category (and its children) will support the Compare feature.
+        x-label:
+          default: Enable Compare
+        type: boolean
+      c_headerMenuBanner:
+        $ref: '#/definitions/markup_text'
+        x-label:
+          default: Header Menu Banner
+      c_headerMenuOrientation:
+        description: Which way to orient the menu and optional header menu HTML. Vertical
+          will list all in one line. Horizontal will list in columns.
+        enum:
+        - Horizontal
+        - Vertical
+        x-enum-labels:
+        - default: Horizontal
+        - default: Vertical
+        x-label:
+          default: Header Menu Orientation
+        type: string
+      c_showInMenu:
+        description: Used to indicate that a category (such as Mens -> Footwear ->
+          Boots) will display in the roll-over navigation. A sub-category only shows
+          if also the parent category is marked as showInMenu. Up to three category
+          levels are shown in roll-over navigation.
+        x-label:
+          default: Show in Menu Navigation
+        type: boolean
+      c_sizeChartID:
+        description: Used to define the content asset ID of the Size Chart that is
+          appropriate for products whose PRIMARY category is the associated category
+          (and its children). Whenever a product detail page (or quick view) is rendered,
+          the Size Chart link is populated based on the value of this attribute for
+          the products primary categorization. If not defined, NO size chart link
+          is displayed.
+        x-label:
+          default: Size Chart
+        type: string
+      c_slotBannerHtml:
+        additionalProperties:
+          $ref: '#/definitions/markup_text'
+        format: localized
+        x-label:
+          default: Slot Banner HTML
+        type: object
+      c_slotBannerImage:
+        $ref: '#/definitions/media_file'
+        description: Image used on either the top or bottom slot on the category landing
+          pages.
+        x-label:
+          default: Category Landing Slot Image
+      catalog_id:
+        description: The id of the catalog that contains it.
+        x-label:
+          default: ID
+        type: string
+      categories:
+        description: The array of sub categories for the category.
+        items:
+          $ref: '#/definitions/category'
+        type: array
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      description:
+        additionalProperties:
+          type: string
+        description: The localized description of the category.
+        format: localized
+        x-label:
+          default: Description
+        type: object
+      id:
+        description: The id of the category.
+        x-label:
+          default: ID
+        maxLength: 256
+        minLength: 1
+        type: string
+      image:
+        description: The name of the category image. The URL to the image is computed.
+        x-label:
+          default: Standard Image
+        maxLength: 256
+        minLength: 1
+        type: string
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      link:
+        description: The URL to get the category. This is a computed attribute and
+          cannot be modified.
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized name of the category.
+        format: localized
+        x-label:
+          default: Name
+        type: object
+      online:
+        description: The online status of the category determines if it is visible
+          in the storefront. Defaults to false if not specified on create.
+        x-label:
+          default: Online
+        type: boolean
+      page_description:
+        additionalProperties:
+          type: string
+        description: The localized page description of the category.
+        format: localized
+        x-label:
+          default: Page Description
+        type: object
+      page_keywords:
+        additionalProperties:
+          type: string
+        description: The localized page keywords for the category.
+        format: localized
+        x-label:
+          default: Page Keywords
+        type: object
+      page_title:
+        additionalProperties:
+          type: string
+        description: The localized page title of the category.
+        format: localized
+        x-label:
+          default: Page Title
+        type: object
+      parent_category_id:
+        description: The id of the parent category. Defaults to root if not specified
+          on create.
+        maxLength: 256
+        minLength: 1
+        type: string
+      paths:
+        items:
+          $ref: '#/definitions/path_record'
+        type: array
+      position:
+        description: The position of the category determines the display order in
+          the storefront.
+        format: double
+        type: number
+      sorting_rules:
+        items:
+          $ref: '#/definitions/sorting_rule'
+        type: array
+      thumbnail:
+        description: The name of the category thumbnail. The URL to the thumbnail
+          is computed.
+        x-label:
+          default: Thumbnail Image
+        maxLength: 256
+        minLength: 1
+        type: string
+  sorting_rule:
+    description: Document representing a product sorting rule
+    properties:
+      creation_date:
+        format: date-time
+        type: string
+      description:
+        description: The description of the product sorting rule.
+        maxLength: 4000
+        type: string
+      id:
+        description: the id of product sorting rule.
+        type: string
+      last_modified:
+        format: date-time
+        type: string
+      product_sorting_rule_steps:
+        description: the steps involved in sorting by this rule.
+        items:
+          $ref: '#/definitions/sorting_rule_step'
+        type: array
+      rule_context:
+        description: The context of the rule, either site or global
+        type: string
+      site:
+        description: ''
+        type: string
+  media_file:
+    properties:
+      abs_url:
+        description: The absolute URL with request protocol (read only)
+        type: string
+      alt:
+        additionalProperties:
+          type: string
+        description: The alternative image text
+        format: localized
+        type: object
+      dis_base_url:
+        description: The DIS base URL only for product images
+        type: string
+      path:
+        description: "The raw media file path\n (only this needs to be provided in\
+          \ update request)"
+        type: string
+      title:
+        additionalProperties:
+          type: string
+        description: The image title
+        format: localized
+        type: object
+  markup_text:
+    properties:
+      markup:
+        description: The rendered HTML (read only)
+        type: string
+      source:
+        description: "The raw markup text\n (only this needs to be provided in update\
+          \ request)"
+        type: string
+  sorting_rule_step:
+    description: Document representing a product sorting rule step
+    properties:
+      attribute_id:
+        description: the id for sorting attribute.
+        type: string
+      direction:
+        description: the direction of the sorting attribute
+        enum:
+        - asc
+        - desc
+        type: string
+      is_system:
+        description: whether or not the attribute is a system attribute.
+        type: boolean
+      position:
+        description: the position of product sorting rule step.
+        format: int32
+        type: integer
+      text_relevance_included:
+        description: The text relevance included.
+        type: boolean
+      type_id:
+        description: the sorting type for sorting attribute.
+        type: string
+paths:
+  /catalogs/{catalog_id}/categories/{category_id}:
+    delete:
+      description: Deletes the category by catalog ID and category ID
+      operationId: deleteCatalogsByIDCategoriesByID
+      parameters:
+      - description: The site context.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The category id to remove
+        in: path
+        minLength: 1
+        name: category_id
+        required: true
+        type: string
+      responses:
+        '204':
+          description: ''
+        '404':
+          description: "`CatalogNotFoundException` - Indicates that the catalog is\
+            \ not provided in the request. or `CategoryNotFoundException` - Indicates\
+            \ that the category does not exist for the catalog provided in \n    \
+            \          the request."
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    get:
+      description: "Action to read an existing category within a catalog. By default,\
+        \ the server\n also returns the first level of sub-categories, but you can\
+        \ specify another level by setting the levels\n parameter. Please note, using\
+        \ a large value for levels may cause performance \n issues in case of a large\
+        \ and deep category tree."
+      operationId: getCatalogsByIDCategoriesByID
+      parameters:
+      - description: the id of the catalog that the category belongs to
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: the id of the category requested
+        in: path
+        maxLength: 256
+        minLength: 1
+        name: category_id
+        required: true
+        type: string
+      - description: "Specifies how many levels of nested sub-categories you want\
+          \ the server to return. The default value\n                  \tis 1."
+        format: int32
+        in: query
+        minimum: 0
+        name: levels
+        type: integer
+      - description: the expansion that client can use to specify and retrieve further
+          information about the category (Internal use only for now).
+        in: query
+        items:
+          type: string
+        name: expand
+        type: array
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/category'
+        '404':
+          description: "`CatalogNotFoundException` - Indicates that the catalog is\
+            \ not provided in the request. or `CategoryNotFoundException` - Indicates\
+            \ that the category does not exist for the catalog provided in \n    \
+            \          the request."
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    patch:
+      description: Updates a catalog category using the information provided.
+      operationId: patchCatalogsByIDCategoriesByID
+      parameters:
+      - description: The id of the catalog.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the category
+        in: path
+        maxLength: 256
+        minLength: 1
+        name: category_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/category'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/category'
+        '400':
+          description: "`CategoryInvalidException` - Indicates that the category in\
+            \ the request is not valid \n \t\t\t\t(the argument indicates the field\
+            \ that was invalid)."
+        '404':
+          description: "`CatalogNotFoundException` - Indicates that the catalog is\
+            \ not provided in the request. or `CategoryNotFoundException` - Indicates\
+            \ that the category does not exist for the catalog provided in \n    \
+            \          the request."
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    put:
+      description: Creates a catalog category using the information provided.
+      operationId: putCatalogsByIDCategoriesByID
+      parameters:
+      - description: The id of the catalog.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the category to be created
+        in: path
+        maxLength: 256
+        minLength: 1
+        name: category_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/category'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/category'
+        '400':
+          description: "`CategoryInvalidException` - Indicates that the category in\
+            \ the request is not valid \n \t\t\t\t(the argument indicates the field\
+            \ that was invalid). or `IdConflictException` - Indicates that the category\
+            \ ID in the request URL does not match the category ID in the request\
+            \ body."
+        '404':
+          description: '`CatalogNotFoundException` - Indicates that the catalog is
+            not provided in the request.'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs

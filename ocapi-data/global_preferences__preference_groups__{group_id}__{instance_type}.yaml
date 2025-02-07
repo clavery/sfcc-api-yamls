@@ -1,0 +1,191 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  organization_preferences:
+    description: Represents a set of preferences attached at the organization level.
+    properties:
+      link:
+        description: A URL that returns the full details for a custom preference
+        type: string
+      site_preferences:
+        description: The list of site preferences, returned with expand=sites
+        items:
+          $ref: '#/definitions/site_preferences'
+        type: array
+  site_preferences:
+    description: Represents a set of preferences attached at the organization level.
+    properties:
+      link:
+        description: A URL that returns the full details for a custom preference
+        type: string
+      site:
+        $ref: '#/definitions/site'
+        description: The site that contains the preferences
+  customer_list_link:
+    description: Document representing a link to a customer list.
+    properties:
+      customer_list_id:
+        description: The customerlist id.
+        type: string
+      link:
+        description: The target of the link.
+        type: string
+      title:
+        additionalProperties:
+          type: string
+        description: The link title.
+        format: localized
+        type: object
+  site:
+    description: Document representing a site.
+    properties:
+      cartridges:
+        description: The cartridge Path of the site
+        type: string
+      creation_date:
+        format: date-time
+        type: string
+      customer_list_link:
+        $ref: '#/definitions/customer_list_link'
+        description: The link to the customer list.
+      description:
+        additionalProperties:
+          type: string
+        description: The description of this site.
+        format: localized
+        type: object
+      display_name:
+        additionalProperties:
+          type: string
+        description: The display name entered by the user.
+        format: localized
+        type: object
+      id:
+        description: The id of this site.
+        minLength: 1
+        type: string
+      in_deletion:
+        description: The deletion status of this site, true if in deletion
+        type: boolean
+      last_modified:
+        format: date-time
+        type: string
+      link:
+        description: A link directly to the site
+        type: string
+      storefront_status:
+        description: ''
+        enum:
+        - online
+        - maintenance
+        - to_be_deleted
+        - protected
+        type: string
+    required:
+    - id
+paths:
+  /global_preferences/preference_groups/{group_id}/{instance_type}:
+    get:
+      description: "For the specified instance, read the custom preferences in the\
+        \ preference group at the global(organization) level.\n Specify 'current'\
+        \ to retrieve the preferences for the instance on which this call is being\
+        \ made. The system will recognize its type."
+      operationId: getGlobalPreferencesPreferenceGroupsByIDByID
+      parameters:
+      - description: One of {staging,development,sandbox,production,current}.
+        in: path
+        name: instance_type
+        required: true
+        type: string
+      - description: The ID of the preference group.
+        in: path
+        name: group_id
+        required: true
+        type: string
+      - description: Set to true to mask the values of preferences of type Password.
+        in: query
+        name: mask_passwords
+        type: boolean
+      - description: The expansion "sites" retrieves the custom preferences in the
+          preference group for all the available sites.
+        in: query
+        items:
+          type: string
+        name: expand
+        type: array
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/organization_preferences'
+        '404':
+          description: '`CustomPreferenceGroupNotFoundException` - Indicates the preference
+            group is not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - global_preferences
+    patch:
+      description: For the specified instance, update one or more custom preferences
+        in the preference group  at the global(organization) level.
+      operationId: patchGlobalPreferencesPreferenceGroupsByIDByID
+      parameters:
+      - description: One of {staging,development,sandbox,production}.
+        in: path
+        name: instance_type
+        required: true
+        type: string
+      - description: The ID of the preference group.
+        in: path
+        name: group_id
+        required: true
+        type: string
+      - description: Set to true to mask the values of preferences of type Password.
+        in: query
+        name: mask_passwords
+        type: boolean
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/organization_preferences'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/organization_preferences'
+        '404':
+          description: '`CustomPreferenceGroupNotFoundException` - Indicates the preference
+            group is not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - global_preferences

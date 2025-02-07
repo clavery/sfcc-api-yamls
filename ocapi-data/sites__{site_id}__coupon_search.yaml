@@ -1,0 +1,355 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  redemption_limit_per_period:
+    description: Document representing a coupon redemption limit.
+    properties:
+      limit:
+        description: The limit on the number of times a coupon can be redeemed for
+          a specified redemption time period.
+        format: int32
+        minimum: 0
+        type: integer
+      redemption_time_frame:
+        description: The redemption time period.
+        format: int32
+        maximum: 999
+        minimum: 0
+        type: integer
+  result_page:
+    description: Data that can be used to get the next and previous page of a Data
+      API results object.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        type: integer
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        type: integer
+  query:
+    description: "Document representing a query. A query contains a set of objects\
+      \ that define criteria\n used to select records. A query can contain one of\
+      \ the following:\n"
+  coupon_system_code_config:
+    properties:
+      code_prefix:
+        description: The code prefix for system-generated coupon codes.
+        x-label:
+          default: Code Prefix
+        type: string
+      number_of_codes:
+        description: The number of system coupon codes that can be issued.
+        format: int32
+        type: integer
+  coupon:
+    description: Document representing a coupon.
+    properties:
+      case_insensitive:
+        description: "True if a coupon is case insensitive; false otherwise. This\
+          \ attribute on the coupon can not be\n modified after the coupon has been\
+          \ created. If an attempt was made to modify this the system would return\n\
+          \ CouponUpdateForbiddenException"
+        type: boolean
+      coupon_id:
+        description: The id of the coupon.
+        x-label:
+          default: ID
+        maxLength: 256
+        minLength: 1
+        readOnly: true
+        type: string
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      description:
+        description: The description of the coupon.
+        maxLength: 4000
+        type: string
+      enabled:
+        description: A flag indicating whether the coupon is enabled.
+        x-label:
+          default: Enabled
+        type: boolean
+      exported_code_count:
+        description: The number of coupon codes attached to the coupon that have been
+          issued (request search only).
+        format: int32
+        type: integer
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      link:
+        description: A link to the coupon.
+        type: string
+      multiple_codes_per_basket:
+        description: "True if a coupon with multiple codes can have different codes\
+          \ used on the same basket or order. If the coupon\n type does not support\
+          \ this configuration, this will return false."
+        type: boolean
+      redemption_count:
+        description: The number of times the coupon has been redeemed (request search
+          only).
+        format: int32
+        type: integer
+      redemption_limits:
+        $ref: '#/definitions/redemption_limits'
+        description: The redemption limit per coupon code.
+      single_code:
+        description: Single coupon code, only valid for Single Code type
+        maxLength: 256
+        minLength: 1
+        type: string
+      system_codes_config:
+        $ref: '#/definitions/coupon_system_code_config'
+        description: The configuration of system coupon codes, including pre-fix and
+          number of codes
+      total_codes_count:
+        description: The total number of coupon codes associated with this coupon
+        format: int32
+        type: integer
+      type:
+        description: The type of the coupon code.
+        enum:
+        - single_code
+        - multiple_codes
+        - system_codes
+        x-enum-labels:
+        - default: Coupon with multiple fixed codes
+        - default: Coupon with single fixed code
+        - default: Coupon with system generated codes
+        x-label:
+          default: Type
+        readOnly: true
+        type: string
+  coupon_search_result:
+    description: Document representing a coupon search result.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        items:
+          type: object
+        type: array
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        minimum: 0
+        type: integer
+      expand:
+        description: List of expansions to be applied to each search results. Expands
+          are optional
+        items:
+          type: string
+        type: array
+      hits:
+        description: The sorted array of search hits. Can be empty.
+        items:
+          $ref: '#/definitions/coupon'
+        type: array
+      next:
+        $ref: '#/definitions/result_page'
+        description: The URL of the next result page.
+      previous:
+        $ref: '#/definitions/result_page'
+        description: The URL of the previous result page.
+      query:
+        $ref: '#/definitions/query'
+        description: The query passed into the search
+        x-sub_types:
+          nested_query: '#/definitions/nested_query'
+          filtered_query: '#/definitions/filtered_query'
+          text_query: '#/definitions/text_query'
+          match_all_query: '#/definitions/match_all_query'
+          term_query: '#/definitions/term_query'
+          bool_query: '#/definitions/bool_query'
+      select:
+        description: The fields that you want to select.
+        type: string
+      sorts:
+        description: The list of sort clauses configured for the search request. Sort
+          clauses are optional.
+        items:
+          $ref: '#/definitions/sort'
+        type: array
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+  search_request:
+    description: Document representing a search request for retrieving items within
+      the Data API. The query is a potentially complex set of expressions. The fields
+      that each query supports are defined within the search resource.
+    properties:
+      count:
+        description: The number of returned documents
+        format: int32
+        maximum: 200
+        minimum: 1
+        type: integer
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        minimum: 0
+        type: integer
+      expand:
+        description: List of expansions to be applied to each search results. Expands
+          are optional
+        items:
+          type: string
+        type: array
+      query:
+        $ref: '#/definitions/query'
+        description: The query to apply
+        x-sub_types:
+          nested_query: '#/definitions/nested_query'
+          filtered_query: '#/definitions/filtered_query'
+          text_query: '#/definitions/text_query'
+          match_all_query: '#/definitions/match_all_query'
+          term_query: '#/definitions/term_query'
+          bool_query: '#/definitions/bool_query'
+      select:
+        description: The field to be selected.
+        type: string
+      sorts:
+        description: The list of sort clauses configured for the search request. Sort
+          clauses are optional.
+        items:
+          $ref: '#/definitions/sort'
+        type: array
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+    required:
+    - query
+  sort:
+    description: Document representing a sort request.
+    properties:
+      field:
+        description: The name of the field to sort on.
+        type: string
+      sort_order:
+        description: The sort order to be applied when sorting. When omitted, the
+          default sort order (ASC) is used.
+        enum:
+        - asc
+        - desc
+        type: string
+    required:
+    - field
+  redemption_limits:
+    description: Document representing a coupon.
+    properties:
+      limit_per_code:
+        description: The redemption limit per code
+        format: int32
+        x-label:
+          default: Redemptions per Code
+        minimum: 0
+        type: integer
+      limit_per_customer:
+        description: The redemption limit per customer
+        format: int32
+        x-label:
+          default: Redemptions per Customer
+        minimum: 0
+        type: integer
+      limit_per_time_frame:
+        $ref: '#/definitions/redemption_limit_per_period'
+        description: The redemption limit per time frame
+        x-label:
+          default: Redemptions per Timeframe
+paths:
+  /sites/{site_id}/coupon_search:
+    post:
+      description: "Searches for coupons.\n\n The Coupon Search document contains\
+        \ a search object that allows filtering on various attributes.\n\n\n The query\
+        \ attribute specifies a complex query that can be used to narrow down the\
+        \ search. These are the list\n of searchable attributes:\n \n - coupon_id\
+        \ - String\n - description - String\n - type - one of {\"single_code\", \"\
+        multiple_codes\", \"system_codes\"}\n - enabled - boolean\n \n\n Note that\
+        \ only searchable attributes can be used in sorting.\n\n The *stats* expand\
+        \ value is required to return the following fields in the Coupon document:\n\
+        \ \n     - exported_code_count\n     - redemption_count\n     - total_codes_count\n\
+        \ "
+      operationId: postSitesByIDCouponSearch
+      parameters:
+      - description: The site context.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/search_request'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/coupon_search_result'
+        '400':
+          description: '`MalformedSearchParameterException` - Thrown if the query
+            is ill-formed.'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

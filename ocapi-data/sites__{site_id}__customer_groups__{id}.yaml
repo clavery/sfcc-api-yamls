@@ -1,0 +1,238 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  customer_group:
+    description: Document representing a customer group
+    properties:
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      description:
+        description: The description for the customer group.  This property is read-only
+          for system groups.
+        x-label:
+          default: Description
+        type: string
+      id:
+        description: "The user specific identifier for the customer group, which must\
+          \ be unique across the organization.  Property\n is read-only."
+        x-label:
+          default: ID
+        maxLength: 256
+        minLength: 1
+        readOnly: true
+        type: string
+      in_deletion:
+        description: The deletion status of this customer group.
+        type: boolean
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      link:
+        description: URL that is used to get this instance.  This property is computed
+          and cannot be modified.
+        type: string
+      member_count:
+        description: The number of members in this customer group.
+        format: int32
+        type: integer
+      rule:
+        $ref: '#/definitions/rule'
+        description: The rule of this customer group. Only available for dynamic customer
+          groups.
+      type:
+        description: The type of the customer group.  This property is read-only.
+        enum:
+        - system
+        - dynamic
+        - static
+        type: string
+  rule:
+    description: Document representing a customer group rule
+    properties:
+      description:
+        description: The description of the rule, describing its conditions in natural
+          language. Property is read-only.
+        type: string
+paths:
+  /sites/{site_id}/customer_groups/{id}:
+    delete:
+      description: "Triggers customer group deletion by ID. Be aware that the deletion\
+        \ happens via asynchronous batch process\n which is the reason the deletion\
+        \ itself is not necessarily finished after the call to this resource returned.\
+        \ The \n customer group that is in deletion will be provided in the response."
+      operationId: deleteSitesByIDCustomerGroupsByID
+      parameters:
+      - description: The id of the site.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: One customer group id to remove
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: The attribute selector for the customer group which is now in
+          deletion
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer_group'
+        '403':
+          description: '`SystemCustomerGroupDeleteForbiddenException` - Thrown when
+            attempting to delete the system customer group.'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites
+    get:
+      description: Action to get customer group information.
+      operationId: getSitesByIDCustomerGroupsByID
+      parameters:
+      - description: The id of the site.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: The id of the requested customer group.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - description: The attribute selector. Include 'member_count' explicitly if
+          member count per customer group is required.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer_group'
+        '404':
+          description: '`CustomerGroupNotFoundException` - Thrown in case the customer
+            group does not exist matching the given id'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites
+    patch:
+      description: Updates the customer group with the specified information.
+      operationId: patchSitesByIDCustomerGroupsByID
+      parameters:
+      - description: The id of the site.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: The id of the requested customer group.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/customer_group'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer_group'
+        '403':
+          description: '`SystemCustomerGroupUpdateForbiddenException` - Thrown when
+            attempting to update the system customer group.'
+        '404':
+          description: '`CustomerGroupNotFoundException` - Thrown in case the customer
+            group does not exist matching the given id'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites
+    put:
+      description: Creates a customer group using the information provided.
+      operationId: putSitesByIDCustomerGroupsByID
+      parameters:
+      - description: The id of the site.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: The id of the customer group to create.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/customer_group'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer_group'
+        '400':
+          description: '`CustomerGroupCreateException` - Thrown when there are system
+            error in creating the customer group. or `IdConflictException` - Thrown
+            when id in query parameter is different from the id in the body.'
+        '403':
+          description: '`SystemCustomerGroupCreateForbiddenException` - Thrown when
+            attempting to create the system customer group.'
+        '409':
+          description: '`CustomerGroupAlreadyExistsException` - if a customer group
+            exists already in the site with the given identifier.'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

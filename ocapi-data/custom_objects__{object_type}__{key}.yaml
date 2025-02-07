@@ -1,0 +1,192 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  custom_object:
+    description: Document representing a custom object that contains all defined custom
+      attributes for its object type.Document representing a custom object that contains
+      all defined custom attributes for its object type.
+    properties:
+      key_property:
+        description: The name of the key property for the custom object. This is ignored
+          in input documents.
+        type: string
+      key_value_integer:
+        description: The id of the custom object when the type of the key is Integer.
+          This is ignored in input documents.
+        format: int32
+        type: integer
+      key_value_string:
+        description: The id of the custom object when the type of the key is String.
+          This is ignored in input documents.
+        type: string
+      object_type:
+        description: The id of the object type. This is ignored in input documents.
+        type: string
+paths:
+  /custom_objects/{object_type}/{key}:
+    delete:
+      description: Deletes a global Custom Object. If the Custom Object does not exist,
+        this will do nothing. Note that the customization scripts are only called,
+        if the Custom Object does exist.
+      operationId: deleteCustomObjectsByIDByID
+      parameters:
+      - description: the ID of the object type
+        in: path
+        minLength: 1
+        name: object_type
+        required: true
+        type: string
+      - description: the key attribute value of the Custom Object
+        in: path
+        minLength: 1
+        name: key
+        required: true
+        type: string
+      responses:
+        '400':
+          description: '`MalformedKeyParameterException` - If the object key must
+            be an integer, but the path parameter has an invalid format'
+        '204':
+          description: ''
+        '404':
+          description: '`ObjectTypeNotFoundException` - For an unknown object type
+            ID'
+      security:
+      - oauth2_application: []
+      tags:
+      - custom_objects
+    get:
+      description: Reads a global Custom Object with a given object type ID and a
+        value for the key attribute of the object which represents its unique identifier.
+      operationId: getCustomObjectsByIDByID
+      parameters:
+      - description: the ID of the object type
+        in: path
+        minLength: 1
+        name: object_type
+        required: true
+        type: string
+      - description: the key attribute value of the Custom Object
+        in: path
+        minLength: 1
+        name: key
+        required: true
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/custom_object'
+        '400':
+          description: '`MalformedKeyParameterException` - If the object key must
+            be an integer, but the path parameter has an invalid format'
+        '404':
+          description: '`CustomObjectNotFoundException` - For an unknown object key
+            or `ObjectTypeNotFoundException` - For an unknown object type ID'
+      security:
+      - oauth2_application: []
+      tags:
+      - custom_objects
+    patch:
+      description: Updates a global Custom Object with information from request body.
+        Note that only mentioned attributes will be updated and the key attribute
+        is ignored. All other attributes will be left unattended.
+      operationId: patchCustomObjectsByIDByID
+      parameters:
+      - description: the ID of the object type
+        in: path
+        minLength: 1
+        name: object_type
+        required: true
+        type: string
+      - description: the key attribute value of the Custom Object
+        in: path
+        minLength: 1
+        name: key
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/custom_object'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/custom_object'
+        '400':
+          description: '`MalformedKeyParameterException` - If the object key must
+            be an integer, but the path parameter has an invalid format'
+        '404':
+          description: '`CustomObjectNotFoundException` - For an unknown object key
+            or `ObjectTypeNotFoundException` - For an unknown object type ID'
+      security:
+      - oauth2_application: []
+      tags:
+      - custom_objects
+    put:
+      description: Creates a global Custom Object from request body. Note that an
+        existing global Custom Object with the same key will be overwritten by this
+        action.
+      operationId: putCustomObjectsByIDByID
+      parameters:
+      - description: the ID of the object type
+        in: path
+        minLength: 1
+        name: object_type
+        required: true
+        type: string
+      - description: the key attribute value of the Custom Object
+        in: path
+        minLength: 1
+        name: key
+        required: true
+        type: string
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/custom_object'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/custom_object'
+        '400':
+          description: '`MalformedKeyParameterException` - If the object key must
+            be an integer, but the path parameter has an invalid format'
+        '404':
+          description: '`CustomObjectNotFoundException` - For an unknown object key
+            or `ObjectTypeNotFoundException` - For an unknown object type ID'
+      security:
+      - oauth2_application: []
+      tags:
+      - custom_objects

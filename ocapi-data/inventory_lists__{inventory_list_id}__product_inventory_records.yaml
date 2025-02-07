@@ -1,0 +1,197 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  product_inventory_record_allocation:
+    description: Document representing a product inventory record allocation.
+    properties:
+      amount:
+        description: The allocation quantity that is currently set. The quantity unit
+          is the same unit as the product itself.
+        format: double
+        minimum: 0
+        type: number
+      reset_date:
+        description: The date the allocation quantity was initialized or reset.
+        format: date-time
+        type: string
+  product_inventory_record:
+    description: Document representing a product inventory record.
+    properties:
+      allocation:
+        $ref: '#/definitions/product_inventory_record_allocation'
+        description: The allocation quantity and reset date.
+      ats:
+        description: "The quantity of items available to sell (ATS). This is calculated\
+          \ as the allocation plus the\n preorderBackorderAllocation minus the turnover."
+        format: double
+        type: number
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      in_stock_date:
+        description: The date that the item is expected to be in stock.
+        format: date-time
+        type: string
+      inventory_list_id:
+        description: The user supplied ID of the inventory list.
+        type: string
+      inventory_turnover:
+        description: "The sum of all inventory transactions (decrements and increments)\
+          \ that have been recorded subsequent to the\n allocation was reset date.\
+          \ The quantity value can be negative due to higher quantity of inventory\
+          \ decrements than\n increments."
+        format: double
+        type: number
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      link:
+        description: The URL that is used to get this instance.
+        type: string
+      perpetual_flag:
+        description: The flag that determines if the product is perpetually in stock.
+        type: boolean
+      pre_order_back_order_allocation:
+        description: The quantity of items that are allocated for sale, beyond the
+          initial stock allocation.
+        format: double
+        type: number
+      pre_order_back_order_handling:
+        description: "The enum holding the records pre-backorder-handling configuration.\
+          \ Possible values are NONE, PREORDER and\n BACKORDER. Method returns NONE\
+          \ in case the record pre-backorder-handling-code is null or unknown."
+        enum:
+        - none
+        - preorder
+        - backorder
+        type: string
+      product_id:
+        description: The user supplied ID of the product.
+        maxLength: 256
+        minLength: 1
+        type: string
+      product_name:
+        description: The name of the product.
+        type: string
+      quantity_on_order:
+        description: The on order quantity, the quantity of all transactions for this
+          record since the allocation reset date.
+        format: double
+        type: number
+      stock_level:
+        description: The current stock level. This is calculated as the allocation
+          minus the turnover.
+        format: double
+        type: number
+  product_inventory_records:
+    description: Document representing an unfiltered list of inventory records.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        description: The collection of product inventory records.
+        items:
+          $ref: '#/definitions/product_inventory_record'
+        type: array
+      expand:
+        description: The list of expands set for the search request. Expands are optional.
+        items:
+          type: string
+        type: array
+      next:
+        description: The URL of the next result page.
+        type: string
+      previous:
+        description: The URL of the previous result page.
+        type: string
+      select:
+        description: The fields that you want to select.
+        type: string
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+paths:
+  /inventory_lists/{inventory_list_id}/product_inventory_records:
+    get:
+      description: Gets all product inventory records for an inventory list.
+      operationId: getInventoryListsByIDProductInventoryRecords
+      parameters:
+      - description: The inventory list ID
+        in: path
+        minLength: 1
+        name: inventory_list_id
+        required: true
+        type: string
+      - description: Optional start index for retrieving the items from a given index
+          (default 0).
+        format: int32
+        in: query
+        name: start
+        type: integer
+      - description: Optional count for retrieving only a subset of the items (default
+          is 25).
+        format: int32
+        in: query
+        name: count
+        type: integer
+      - description: The property selector.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/product_inventory_records'
+        '404':
+          description: '`InventoryListNotFoundException` - Indicates the inventory
+            list does not exist.'
+      security:
+      - oauth2_application: []
+      tags:
+      - inventory_lists

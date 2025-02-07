@@ -1,0 +1,261 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  site_resource_info:
+    description: Object to represent a site configuration and available resources
+      in the site configuration.
+    properties:
+      site_configs:
+        description: Site configuration
+        items:
+          $ref: '#/definitions/resource_info'
+        type: array
+      site_id:
+        description: Site ID
+        type: string
+    required:
+    - site_configs
+  ocapi_configs_api_response:
+    description: OCAPI configuration APIs response. It contains all available resources
+      for a client
+    properties:
+      global:
+        description: Global configuration
+        items:
+          $ref: '#/definitions/site_resource_info'
+        type: array
+      sites:
+        description: Site configurations
+        items:
+          $ref: '#/definitions/site_resource_info'
+        type: array
+  resource_info:
+    properties:
+      allowed_origins:
+        description: Allowed Origins
+        items:
+          type: string
+        type: array
+      api_type:
+        description: API Type
+        enum:
+        - data
+        - shop
+        type: string
+      resources:
+        description: An array of resources
+        items:
+          $ref: '#/definitions/resource_object'
+        minItems: 1
+        type: array
+      response_headers:
+        additionalProperties:
+          type: string
+        description: Response Header
+        type: object
+    required:
+    - api_type
+    - resources
+  version_range_object:
+    description: Object to represent the Version Range. Used in resources_object.
+    properties:
+      from:
+        description: Starting version
+        type: string
+      until:
+        description: Ending version
+        type: string
+  resource_object:
+    description: Object to represent a resource in ocapi_config_api_request
+    properties:
+      cache_time:
+        description: Resource Cache time
+        format: int32
+        type: integer
+      config:
+        additionalProperties:
+          type: string
+        description: Configuration of the resource
+        type: object
+      methods:
+        description: Allowed methods of the resource
+        items:
+          type: string
+        minItems: 1
+        type: array
+      personalized_caching_enabled:
+        description: Indicate if the personalized caching is enabled for the resource
+        type: boolean
+      read_attributes:
+        description: Read attributes of the resource
+        type: string
+      resource_id:
+        description: Resource ID
+        minLength: 1
+        type: string
+      version_range:
+        $ref: '#/definitions/version_range_object'
+        description: Version range
+      write_attributes:
+        description: Write attributes of the resource
+        type: string
+    required:
+    - methods
+    - resource_id
+  ocapi_configs_api_request:
+    description: OCAPI configuration APIs request
+    properties:
+      resource_info:
+        $ref: '#/definitions/resource_info'
+        description: Information of resources to be added
+      sites:
+        description: Sites to be updated
+        items:
+          type: string
+        type: array
+    required:
+    - resource_info
+    - sites
+paths:
+  /ocapi_configs/{clientId}:
+    delete:
+      description: Delete a client.
+      operationId: deleteOcapiConfigsByID
+      parameters:
+      - description: Id of the client to be deleted.
+        in: path
+        minLength: 1
+        name: clientId
+        required: true
+        type: string
+      responses:
+        '400':
+          description: '`InvalidOCAPIConfigException` - Indicates that the resulting
+            config is not valid or `SelfUpdateException` - Write operation on self
+            is not allowed. (The clientId being used for calling this API should be
+            different from target clientId)'
+        '204':
+          description: ''
+      security:
+      - oauth2_application: []
+      tags:
+      - ocapi_configs
+    get:
+      description: Get all allowed resources for the client.
+      operationId: getOcapiConfigsByID
+      parameters:
+      - description: client ID
+        in: path
+        minLength: 1
+        name: clientId
+        required: true
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/ocapi_configs_api_response'
+        '400':
+          description: '`InvalidOCAPIConfigException` - Indicates that at least one
+            of the existing configs can not be parsed'
+      security:
+      - oauth2_application: []
+      tags:
+      - ocapi_configs
+    post:
+      description: Add a client to existing OCAPI configurations. Return errors when
+        client already exists.
+      operationId: postOcapiConfigsByID
+      parameters:
+      - description: client ID
+        in: path
+        minLength: 1
+        name: clientId
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/ocapi_configs_api_request'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/ocapi_configs_api_response'
+        '400':
+          description: '`InvalidOCAPIConfigException` - Indicates that the resulting
+            config is not valid or `SelfUpdateException` - Write operation on self
+            is not allowed. (The clientId being used for calling this API should be
+            different from target clientId)'
+        '404':
+          description: '`SiteNotFoundException` - Indicates that at least one of the
+            target sites is unknown'
+        '409':
+          description: '`DuplicateClientIdException` - Indicates that the client id
+            already exists in original OCAPI configuration'
+      security:
+      - oauth2_application: []
+      tags:
+      - ocapi_configs
+    put:
+      description: Add a client to existing OCAPI configurations. Overwrite config
+        if the client already exists.
+      operationId: putOcapiConfigsByID
+      parameters:
+      - description: client ID
+        in: path
+        minLength: 1
+        name: clientId
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/ocapi_configs_api_request'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/ocapi_configs_api_response'
+        '400':
+          description: '`InvalidOCAPIConfigException` - Indicates that the resulting
+            config is not valid or `SelfUpdateException` - Write operation on self
+            is not allowed. (The clientId being used for calling this API should be
+            different from target clientId)'
+        '404':
+          description: '`SiteNotFoundException` - Indicates that at least one of the
+            target sites is unknown'
+      security:
+      - oauth2_application: []
+      tags:
+      - ocapi_configs

@@ -1,0 +1,69 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  ecdn_log_fetch_response:
+    description: Response object, providing the status of the current log fetch request.
+    properties:
+      id:
+        description: ID of the log fetch request
+        type: string
+      link:
+        description: HTTPS Download link to the fetched log file, which has a lifetime
+          of 30 minutes. This link will only appear, if the current status of the
+          log fetching is 'finished'.
+        type: string
+      status:
+        description: Current status of the log fetch request
+        enum:
+        - pending
+        - running
+        - finished
+        type: string
+paths:
+  /log_requests/ecdn/{id}:
+    get:
+      description: Retrieves the current execution status of the log file fetching.
+      operationId: getLogRequestsEcdnByID
+      parameters:
+      - description: ID of the log fetching execution
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/ecdn_log_fetch_response'
+      security:
+      - oauth2_application: []
+      tags:
+      - log_requests

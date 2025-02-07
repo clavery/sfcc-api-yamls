@@ -1,0 +1,287 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  variation_attribute:
+    description: Document representing a variation attribute.
+    properties:
+      attribute_definition_id:
+        description: The id of the requested attribute definition.
+        type: string
+      attribute_definition_name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation attribute definition.
+        format: localized
+        type: object
+      default_value:
+        description: default variation attribute value
+        type: string
+      id:
+        description: The id of the variation attribute.
+        minLength: 1
+        type: string
+      link:
+        description: URL that is used to get this instance
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation attribute.
+        format: localized
+        type: object
+      shared:
+        description: Returns the value of attribute 'shared' if attribute is local
+          or shared
+        type: boolean
+      slicing:
+        description: Returns the value of attribute 'slicing'.
+        type: boolean
+      values:
+        description: The sorted array of variation values. This array can be empty.
+        items:
+          $ref: '#/definitions/variation_attribute_value'
+        type: array
+      variation_attribute_type:
+        description: variation attribute type
+        enum:
+        - string
+        - int
+        - unknown
+        type: string
+    required:
+    - attribute_definition_id
+  media_file:
+    properties:
+      abs_url:
+        description: The absolute URL with request protocol (read only)
+        type: string
+      alt:
+        additionalProperties:
+          type: string
+        description: The alternative image text
+        format: localized
+        type: object
+      dis_base_url:
+        description: The DIS base URL only for product images
+        type: string
+      path:
+        description: "The raw media file path\n (only this needs to be provided in\
+          \ update request)"
+        type: string
+      title:
+        additionalProperties:
+          type: string
+        description: The image title
+        format: localized
+        type: object
+  variation_attribute_value:
+    description: Document representing a variation attribute value.
+    properties:
+      description:
+        additionalProperties:
+          type: string
+        description: The localized description of the variation value.
+        format: localized
+        type: object
+      image:
+        $ref: '#/definitions/media_file'
+        description: The first product image for the configured viewtype and this
+          variation value.
+      image_swatch:
+        $ref: '#/definitions/media_file'
+        description: The first product image for the configured viewtype and this
+          variation value. (typically the swatch image)
+      link:
+        description: ''
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation value.
+        format: localized
+        type: object
+      orderable:
+        description: A flag indicating whether at least one variant with this variation
+          attribute value is available to sell.
+        type: boolean
+      position:
+        description: The position of the value among all values of a variation attribute.
+        format: double
+        type: number
+      value:
+        description: The actual variation value.
+        minLength: 1
+        type: string
+    required:
+    - value
+paths:
+  /products/{product_id}/variation_attributes/{id}:
+    delete:
+      description: Deletes a variation attribute by ID.
+      operationId: deleteProductsByIDVariationAttributesByID
+      parameters:
+      - description: The id of the product.
+        in: path
+        minLength: 1
+        name: product_id
+        required: true
+        type: string
+      - description: One variation attribute id to remove.
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        '400':
+          description: '`ProductNotMasterException` - Indicates the master product
+            is not found.'
+        '204':
+          description: ''
+        '404':
+          description: '`VariationAttributeNotFoundException` - Indicates that the
+            variation attribute is not found. or `ProductNotFoundException` - Indicates
+            the product is not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - products
+    get:
+      description: Action to get variation attribute information only for master product.
+      operationId: getProductsByIDVariationAttributesByID
+      parameters:
+      - description: The product ID of a variant or a variation master or a variation
+          group.
+        in: path
+        minLength: 1
+        name: product_id
+        required: true
+        type: string
+      - description: The id of the requested variation attribute.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variation_attribute'
+        '400':
+          description: '`ProductNotMasterException` - Indicates the master product
+            is not found.'
+        '404':
+          description: '`VariationAttributeNotFoundException` - Indicates that the
+            variation attribute is not found. or `ProductNotFoundException` - Indicates
+            the product is not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - products
+    patch:
+      description: "Updates the variation attribute with the specified information.\n\
+        \n \n - name\n - slicing\n "
+      operationId: patchProductsByIDVariationAttributesByID
+      parameters:
+      - description: The id of the product.
+        in: path
+        minLength: 1
+        name: product_id
+        required: true
+        type: string
+      - description: The id of the requested variation attribute.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/variation_attribute'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variation_attribute'
+        '400':
+          description: '`ProductNotMasterException` - Indicates the master product
+            is not found.'
+        '404':
+          description: '`VariationAttributeNotFoundException` - Indicates that the
+            variation attribute is not found. or `ProductNotFoundException` - Indicates
+            the product is not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - products
+    put:
+      description: "Creates a local variation attribute using the information provided.\
+        \ This endpoint can't create shared variation attributes. \n To create a shared\
+        \ variation attribute, use the catalogs resource."
+      operationId: putProductsByIDVariationAttributesByID
+      parameters:
+      - description: The id of the product.
+        in: path
+        minLength: 1
+        name: product_id
+        required: true
+        type: string
+      - description: The id of the variation attribute to create.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/variation_attribute'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variation_attribute'
+        '400':
+          description: '`ProductVariationAttributeIDNotUniqueException` - Indicates
+            that the variation attribute id is not unique. or `ProductVariationAttributeDefinitionNotUniqueException`
+            - Indicates that the variation attribute definition is not unique. or
+            `ProductNotMasterException` - Indicates the master product is not found.'
+        '404':
+          description: '`AttributeDefinitionNotFoundException` - If attribute definition
+            supplied is not a product attribute. or `ProductNotFoundException` - Indicates
+            the product is not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - products

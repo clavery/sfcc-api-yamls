@@ -1,0 +1,417 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  customer:
+    description: Document representing a customer.
+    properties:
+      birthday:
+        description: The customer's birthday.
+        format: date
+        x-label:
+          default: Birthday
+        type: string
+      c_familyStatus:
+        x-label:
+          default: Family Status
+        type: string
+      c_location:
+        description: The shopper's specified location.
+        format: text
+        x-label:
+          default: The shopper's specified location.
+        type: string
+      company_name:
+        description: The customer's company name.
+        x-label:
+          default: Company
+        maxLength: 256
+        type: string
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      credentials:
+        $ref: '#/definitions/credentials'
+        description: The customer's credentials.
+      customer_id:
+        description: "The customer's id. Both registered and guest customers have\
+          \ a\n customer id."
+        maxLength: 28
+        type: string
+      customer_no:
+        description: The customer's number.
+        x-label:
+          default: Customer No.
+        maxLength: 100
+        type: string
+      email:
+        description: The customer's email address.
+        format: email
+        x-label:
+          default: Email
+        maxLength: 256
+        type: string
+      fax:
+        description: "The fax number to use for the customer.\n The length is restricted\
+          \ to 32 characters."
+        x-label:
+          default: Fax Number
+        maxLength: 32
+        type: string
+      first_name:
+        description: The customer's first name.
+        x-label:
+          default: First Name
+        maxLength: 256
+        type: string
+      gender:
+        description: The customer's gender.
+        enum:
+        - 1
+        - 2
+        x-enum-labels:
+        - default: Male
+        - default: Female
+        format: int32
+        x-label:
+          default: Gender
+        type: integer
+      global_party_id:
+        description: The Global Party ID is set by Customer 360 and identifies a person
+          across multiple systems.
+        type: string
+      job_title:
+        description: The customer's job title.
+        x-label:
+          default: Job Title
+        maxLength: 256
+        type: string
+      last_login_time:
+        description: The last login time of the customer.
+        format: date-time
+        x-label:
+          default: Last Login Time
+        readOnly: true
+        type: string
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      last_name:
+        description: The customer's last name.
+        x-label:
+          default: Last Name
+        maxLength: 256
+        type: string
+      last_visit_time:
+        description: The last visit time of the customer.
+        format: date-time
+        x-label:
+          default: Last Visit Time
+        readOnly: true
+        type: string
+      phone_business:
+        description: The customer's business phone number.
+        x-label:
+          default: Business Phone
+        maxLength: 32
+        type: string
+      phone_home:
+        description: The customer's home phone number.
+        x-label:
+          default: Home Phone
+        maxLength: 32
+        type: string
+      phone_mobile:
+        description: The customer's mobile phone number.
+        x-label:
+          default: Mobile Phone
+        maxLength: 32
+        type: string
+      preferred_locale:
+        description: "The customer's preferred locale, formatted with a hyphen. (For\
+          \ example: en-US)\n If the request uses an underscore, as with the Java\
+          \ locale format, the stored value is converted to a hyphen.\n (For example:\
+          \ en_US is stored as en-US)"
+        x-label:
+          default: Preferred Locale
+        readOnly: true
+        type: string
+      previous_login_time:
+        description: The time when the customer logged in previously.
+        format: date-time
+        type: string
+      previous_visit_time:
+        description: The time when the customer previously visited the store.
+        format: date-time
+        type: string
+      primary_address:
+        $ref: '#/definitions/customer_address'
+        description: The customers primary or default address.
+      salutation:
+        description: The customer's salutation.
+        x-label:
+          default: Salutation
+        maxLength: 256
+        type: string
+      second_name:
+        description: The customer's second name.
+        x-label:
+          default: Second Name
+        maxLength: 256
+        type: string
+      suffix:
+        description: The customer's suffix (for example, "Jr." or "Sr.").
+        x-label:
+          default: Name Suffix
+        maxLength: 256
+        type: string
+      title:
+        description: The customer's title (for example, "Mrs" or "Mr").
+        x-label:
+          default: Title
+        maxLength: 256
+        type: string
+  customer_address:
+    description: Document representing a customer address.
+    properties:
+      address1:
+        description: The customer's first address.
+        x-label:
+          default: Address 1
+        maxLength: 256
+        type: string
+      address2:
+        description: The customer's second address value.
+        x-label:
+          default: Address 2
+        maxLength: 256
+        type: string
+      address_id:
+        description: The customer address id.
+        x-label:
+          default: Address ID
+        maxLength: 256
+        type: string
+      city:
+        description: The customer's city.
+        x-label:
+          default: City
+        maxLength: 256
+        type: string
+      company_name:
+        description: The customer's company name.
+        x-label:
+          default: Company
+        maxLength: 256
+        type: string
+      country_code:
+        description: The customer's two-character country code per ISO 3166-1 alpha-2.
+        enum:
+        - CN
+        - FR
+        - GB
+        - IT
+        - JP
+        - US
+        x-enum-labels:
+        - default: China
+        - default: France
+        - default: United Kingdom
+        - default: Italy
+        - default: Japan
+        - default: United States
+        x-label:
+          default: Country
+        maxLength: 2
+        type: string
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      etag:
+        description: The generated eTag representing the state of the customer address.
+        type: string
+      first_name:
+        description: The customer's first name.
+        x-label:
+          default: First Name
+        maxLength: 256
+        type: string
+      full_name:
+        description: The concatenation of the customer's first, middle, and last names
+          and its suffix.
+        type: string
+      job_title:
+        description: The customer's job title.
+        x-label:
+          default: Job Title
+        maxLength: 256
+        type: string
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      last_name:
+        description: The customer's last name.
+        x-label:
+          default: Last Name
+        maxLength: 256
+        type: string
+      phone:
+        description: The customer's phone number.
+        x-label:
+          default: Contact Phone
+        maxLength: 32
+        type: string
+      post_box:
+        description: The customer's post box.
+        x-label:
+          default: Post Box
+        maxLength: 256
+        type: string
+      postal_code:
+        description: The customer's postal code.
+        x-label:
+          default: Postal Code
+        maxLength: 256
+        type: string
+      salutation:
+        description: The customer's salutation.
+        x-label:
+          default: Salutation
+        maxLength: 256
+        type: string
+      second_name:
+        description: The customer's second name.
+        x-label:
+          default: Second Name
+        maxLength: 256
+        type: string
+      state_code:
+        description: The customer's state.
+        x-label:
+          default: State
+        maxLength: 256
+        type: string
+      suffix:
+        description: The customer's suffix.
+        x-label:
+          default: Suffix
+        maxLength: 256
+        type: string
+      suite:
+        description: The customer's suite.
+        x-label:
+          default: Suite No.
+        maxLength: 32
+        type: string
+      title:
+        description: The customer's title.
+        x-label:
+          default: Title
+        maxLength: 256
+        type: string
+    required:
+    - address_id
+    - country_code
+    - last_name
+  credentials:
+    description: Document representing the credentials of a customer.
+    properties:
+      enabled:
+        description: A flag indicating whether the customer is enabled and can log.
+        type: boolean
+      locked:
+        description: A flag indicating whether the customer account is locked.
+        type: boolean
+      login:
+        description: The login of the customer.
+        maxLength: 256
+        type: string
+      password_question:
+        description: The password question.
+        maxLength: 256
+        type: string
+    required:
+    - login
+paths:
+  /customer_lists/{list_id}/customers:
+    post:
+      description: "Action to create a new customer. The customer is created using\
+        \ the specified credentials and customer\n information.This action verifies\
+        \ the following:\n \n - Login acceptance criteria and uniqueness\n - Mandatory\
+        \ customer properties\n \n If the action fails to create the customer, it\
+        \ returns a 400 fault with an appropriate message."
+      operationId: postCustomerListsByIDCustomers
+      parameters:
+      - description: The customer list id
+        in: path
+        minLength: 1
+        name: list_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/customer'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer'
+        '400':
+          description: '`InvalidLoginException` - Indicates the login does not match
+            the login acceptance criteria. or `LoginAlreadyInUseException` - Indicates
+            the login is already in use. or `CredentialsMissingException` - Indicates
+            that the mandatory credentials are missing in the input document. or `LoginMissingException`
+            - Indicates that the mandatory login property is missing in the input
+            document.'
+        '404':
+          description: '`CustomerListNotFoundException` - Indicates that the customer
+            list with the given customer list id is unknown.'
+      security:
+      - oauth2_application: []
+      tags:
+      - customer_lists
