@@ -1,0 +1,225 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  customer_group_member:
+    description: Document representing a customer group member
+    properties:
+      active:
+        description: A flag indicating whether the customer is enabled and can log
+          in.
+        type: boolean
+      c_familyStatus:
+        x-label:
+          default: Family Status
+        type: string
+      c_location:
+        description: The shopper's specified location.
+        format: text
+        x-label:
+          default: The shopper's specified location.
+        type: string
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      customer_link:
+        description: The link to the customer resource.
+        maxLength: 256
+        type: string
+      customer_no:
+        description: The customers number (id).
+        x-label:
+          default: Customer No.
+        maxLength: 100
+        type: string
+      email:
+        description: The customer's email address.
+        format: email
+        x-label:
+          default: Email
+        maxLength: 256
+        type: string
+      first_name:
+        description: The customer's first name.
+        x-label:
+          default: First Name
+        maxLength: 256
+        type: string
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      last_name:
+        description: The customer's last name.
+        x-label:
+          default: Last Name
+        maxLength: 256
+        type: string
+      link:
+        description: The link to the customer group member resource.
+        maxLength: 256
+        type: string
+      login:
+        description: The login of the customer.
+        maxLength: 256
+        type: string
+paths:
+  /sites/{site_id}/customer_groups/{id}/members/{customer_no}:
+    delete:
+      description: Action to remove a customer from a (static) customer group.
+      operationId: deleteSitesByIDCustomerGroupsByIDMembersByID
+      parameters:
+      - description: The id of the site.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: The id of the customer group.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - description: The customer number of the customer to remove from the group.
+        in: path
+        minLength: 1
+        name: customer_no
+        required: true
+        type: string
+      - description: The selector for selective response content.
+        in: query
+        name: select
+        type: string
+      responses:
+        '204':
+          description: ''
+        '403':
+          description: '`CustomerGroupUnsupportedAssignmentException` - Thrown when
+            the customer group is not a static group.'
+        '404':
+          description: '`CustomerGroupNotFoundException` - Thrown in case the customer
+            group does not exist matching the given id. or `CustomerNotFoundException`
+            - Thrown in case the customer list did not exist, or the customer does
+            not exist in the list.'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites
+    get:
+      description: Action to get customer group member information.
+      operationId: getSitesByIDCustomerGroupsByIDMembersByID
+      parameters:
+      - description: The id of the site.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: The id of the requested members customer group.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - description: The customer number of the requested customer group member.
+        in: path
+        minLength: 1
+        name: customer_no
+        required: true
+        type: string
+      - description: The selector for selective response content.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer_group_member'
+        '404':
+          description: '`CustomerGroupNotFoundException` - Thrown in case the customer
+            group does not exist matching the given id or `CustomerGroupMemberNotFoundException`
+            - Thrown in case the customer group member did not exist, or the group
+            is not a static group'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites
+    put:
+      description: Action to add customer to (static) customer group.
+      operationId: putSitesByIDCustomerGroupsByIDMembersByID
+      parameters:
+      - description: The id of the site.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: The id of the customer group.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - description: The customer number of the customer to add to the group.
+        in: path
+        minLength: 1
+        name: customer_no
+        required: true
+        type: string
+      - description: The selector for selective response content.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer_group_member'
+        '403':
+          description: '`CustomerGroupUnsupportedAssignmentException` - Thrown when
+            the customer group is not a static group.'
+        '404':
+          description: '`CustomerGroupNotFoundException` - Thrown in case the customer
+            group does not exist matching the given id. or `CustomerNotFoundException`
+            - Thrown in case the customer list did not exist, or the customer does
+            not exist in in the list.'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

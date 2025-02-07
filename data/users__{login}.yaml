@@ -1,0 +1,224 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  user:
+    description: Document representing a user.
+    properties:
+      creation_date:
+        format: date-time
+        type: string
+      disabled:
+        description: Flag whether the user is disabled.
+        type: boolean
+      email:
+        description: The email address.
+        maxLength: 256
+        type: string
+      external_id:
+        description: The external id. This attribute is only valid when the user uses
+          centralized authentication.
+        maxLength: 256
+        type: string
+      first_name:
+        description: The first name.
+        maxLength: 256
+        type: string
+      last_login_date:
+        description: Last login of the user.
+        format: date
+        type: string
+      last_modified:
+        format: date-time
+        type: string
+      last_name:
+        description: The last name.
+        maxLength: 256
+        type: string
+      link:
+        description: URL that is used to get this instance.  This property is computed
+          and cannot be modified.
+        type: string
+      locked:
+        description: Flag whether the user is locked.
+        type: boolean
+      login:
+        description: The user login.
+        maxLength: 256
+        type: string
+      password:
+        description: "The password. This attribute is only used to set the password\
+          \ upon user creation.\n This attribute is only valid when the user does\
+          \ not use centralized authentication."
+        type: string
+      password_expiration_date:
+        description: The user password expiration time
+        format: date-time
+        type: string
+      password_modification_date:
+        description: The time, where the password was last modified
+        format: date-time
+        type: string
+      preferred_data_locale:
+        description: "The effective preferred data locale of the user. A locale is\
+          \ only considered if the user has at least read\n permission on the locale."
+        type: string
+      preferred_ui_locale:
+        description: The preferred UI locale of the user.
+        type: string
+      roles:
+        description: List of role ids the user is assigned to.
+        items:
+          type: string
+        type: array
+    required:
+    - email
+    - last_name
+paths:
+  /users/{login}:
+    delete:
+      description: Action to delete a single user.
+      operationId: deleteUsersByID
+      parameters:
+      - description: login of the user
+        in: path
+        minLength: 1
+        name: login
+        required: true
+        type: string
+      responses:
+        '204':
+          description: ''
+        '404':
+          description: '`UserNotFoundException` - If no user with the specified login
+            could be found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - users
+    get:
+      description: Action to get a user.
+      operationId: getUsersByID
+      parameters:
+      - description: login of the user
+        in: path
+        minLength: 1
+        name: login
+        required: true
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/user'
+        '404':
+          description: '`UserNotFoundException` - If no user with the specified login
+            could be found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - users
+    patch:
+      description: "Action to update a user.\n\n Note: The `locked` flag and the user\
+        \ `password` cannot be updated with this resource."
+      operationId: patchUsersByID
+      parameters:
+      - description: login of the user
+        in: path
+        minLength: 1
+        name: login
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/user'
+        '400':
+          description: '`IdConflictException` - If the login in the request URL is
+            different from the login in the request body. or `UnknownLocaleException`
+            - If either the Preferred UI Locale or the Preferred Data Locale are unknown.
+            or `ExternalIdAlreadyExistsException` - If another user with the same
+            external id already exists. or `ExternalIdNullException` - If the external
+            id is explicitly set to null for an externally managed user'
+        '403':
+          description: '`UserOperationNotAllowedException` - If creation or replacement
+            of a user with the given login is not allowed.'
+        '404':
+          description: '`UserNotFoundException` - If no user with the specified login
+            could be found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - users
+    put:
+      description: "Action to create or overwrite a user.\n\n If a user with the given\
+        \ login already exists, the existing user will be overwritten.\n If no such\
+        \ login exists, a new user is created."
+      operationId: putUsersByID
+      parameters:
+      - description: login of the user
+        in: path
+        minLength: 1
+        name: login
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/user'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/user'
+        '400':
+          description: '`PasswordPolicyViolationException` - If the password doesn''t
+            meet the acceptance crtiteria of a user password. or `IdConflictException`
+            - If the login in the request URL is different from the login in the request
+            body. or `UnknownLocaleException` - If either the Preferred UI Locale
+            or the Preferred Data Locale are unknown. or `InvalidCredentialsException`
+            - If password or external id of the user are invalid. or `ExternalIdAlreadyExistsException`
+            - If another user with the same external id already exists. or `LocalUserCreationException`
+            - If creation of a local Business Manager user is not allowed with the
+            current server settings.'
+        '403':
+          description: '`UserOperationNotAllowedException` - If creation or replacement
+            of a user with the given login is not allowed.'
+      security:
+      - oauth2_application: []
+      tags:
+      - users

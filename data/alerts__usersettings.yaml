@@ -1,0 +1,116 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  alert_settings:
+    description: Document containing the alert settings of a user.
+    properties:
+      settings:
+        description: Alert settings.
+        items:
+          $ref: '#/definitions/alert_descriptor_settings'
+        type: array
+  alert_descriptor_settings:
+    description: Document describing settings for a single alert descriptor.
+    properties:
+      application_context_path:
+        description: The application context path.
+        minLength: 1
+        type: string
+      application_id:
+        description: The application ID.
+        minLength: 1
+        type: string
+      is_user_override:
+        description: Flag that indicates whether the settings for this descriptor
+          have been changed by the user. In a PATCH request, this flag must be set
+          to `true` to override the default settings. If this flag to `false` in a
+          PATCH request, the default user settings for this descriptor are restored
+          (and all other fields are ignored).
+        type: boolean
+      message_id:
+        description: The message ID.
+        minLength: 1
+        type: string
+      priority:
+        description: The user priority.
+        enum:
+        - hidden
+        - informational
+        - warning
+        - action_required
+        type: string
+      show_in_header:
+        description: Flag that indicates whether the alert is shown in the Business
+          Manager header.
+        type: boolean
+      show_on_homepage:
+        description: Flag that indicates whether the alert is shown on the Business
+          Manager homepage.
+        type: boolean
+    required:
+    - application_context_path
+    - application_id
+    - is_user_override
+    - message_id
+    - priority
+    - show_in_header
+    - show_on_homepage
+paths:
+  /alerts/usersettings:
+    get:
+      description: Gets the alert settings for the user.
+      operationId: getAlertsUsersettings
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/alert_settings'
+      security:
+      - oauth2_application: []
+      tags:
+      - alerts
+    patch:
+      description: Changes the alert settings for the user.
+      operationId: patchAlertsUsersettings
+      parameters:
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/alert_settings'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/alert_settings'
+      security:
+      - oauth2_application: []
+      tags:
+      - alerts

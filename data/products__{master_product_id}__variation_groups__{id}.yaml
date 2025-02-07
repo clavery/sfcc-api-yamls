@@ -1,0 +1,216 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  variation_group:
+    description: Document representing a variation group.
+    properties:
+      link:
+        description: The URL addressing the product.
+        type: string
+      orderable:
+        description: A flag indicating whether the variation group is orderable.
+        type: boolean
+      price:
+        description: The sales price of the variation group.
+        format: double
+        type: number
+      price_per_unit:
+        description: The sales price per unit of the variation group.
+        format: double
+        type: number
+      product_id:
+        description: The id (SKU) of the variation group.
+        maxLength: 100
+        minLength: 1
+        type: string
+      variation_values:
+        additionalProperties:
+          type: string
+        description: The actual variation attribute id - value pairs.
+        type: object
+paths:
+  /products/{master_product_id}/variation_groups/{id}:
+    delete:
+      description: "Unassign a variation group product from a product master.  The\
+        \ variation group product is not\n deleted: it remains as a normal product\
+        \ after unsassign."
+      operationId: deleteProductsByIDVariationGroupsByID
+      parameters:
+      - description: ''
+        in: path
+        minLength: 1
+        name: master_product_id
+        required: true
+        type: string
+      - description: ''
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      responses:
+        '400':
+          description: '`ProductNotMasterException` - Indicates the master product
+            id does not represent a master product. or `ProductIsNotVariationGroupException`
+            - Indicates product specified is not a variation group.'
+        '204':
+          description: ''
+        '404':
+          description: '`ProductNotFoundException` - Indicates either the master product
+            or the variation group product cannot be found. or `VariationGroupNotFoundException`
+            - Indicates the product does not belong to the master product.'
+      security:
+      - oauth2_application: []
+      tags:
+      - products
+    get:
+      description: Read a variation group for a product master.
+      operationId: getProductsByIDVariationGroupsByID
+      parameters:
+      - description: The id of the master product that contains the variation group.
+        in: path
+        minLength: 1
+        name: master_product_id
+        required: true
+        type: string
+      - description: The id of the variation group product.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - description: ''
+        in: query
+        name: site_id
+        type: string
+      - description: The valid expands are {price,availability}
+        in: query
+        items:
+          type: string
+        name: expand
+        type: array
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variation_group'
+        '400':
+          description: '`ProductNotMasterException` - Indicates the master product
+            id does not represent a master product. or `ProductIsNotVariationGroupException`
+            - Indicates the product specified is not a variation group.'
+        '404':
+          description: '`ProductNotFoundException` - Indicates either the master product
+            or the variation group product cannot be found. or `VariationGroupNotFoundException`
+            - Indicates the product does not belong to the master product.'
+      security:
+      - oauth2_application: []
+      tags:
+      - products
+    patch:
+      description: Update a variation group for a product master.
+      operationId: patchProductsByIDVariationGroupsByID
+      parameters:
+      - description: The id of the master product that contains the variation group.
+        in: path
+        minLength: 1
+        name: master_product_id
+        required: true
+        type: string
+      - description: The id of the variation group product.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/variation_group'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variation_group'
+        '400':
+          description: '`ProductNotMasterException` - Indicates the master product
+            id does not represent a master product. or `ProductIsNotVariationGroupException`
+            - Indicates product specified is not a variation group. or `VariationValueNotValidException`
+            - Indicates the values passed are not valid for the variation attributes.'
+        '404':
+          description: '`ProductNotFoundException` - Indicates either the master product
+            or the variation group product cannot be found. or `VariationGroupNotFoundException`
+            - Indicates the product does not belong to the master product.'
+      security:
+      - oauth2_application: []
+      tags:
+      - products
+    put:
+      description: "Assign a variation group for a product master.  If the variation\
+        \ group product does not initially exist,\n one is created using the body\
+        \ passed in."
+      operationId: putProductsByIDVariationGroupsByID
+      parameters:
+      - description: The id of the master product that contains the variation group.
+        in: path
+        minLength: 1
+        name: master_product_id
+        required: true
+        type: string
+      - description: The id of the variation group product.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/variation_group'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variation_group'
+        '400':
+          description: '`ProductNotMasterException` - Indicates the master product
+            id does not represent a master product. or `VariationValueNotValidException`
+            - Indicates the values passed are not valid for the variation attributes.'
+        '404':
+          description: '`ProductNotFoundException` - Indicates either the master product
+            or the variation group product cannot be found. or `VariationAttributeValueNotFoundException`
+            - Indicates the value passed into a variation attribute is not one found
+            in the valid values.'
+      security:
+      - oauth2_application: []
+      tags:
+      - products

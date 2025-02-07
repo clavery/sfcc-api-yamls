@@ -1,0 +1,176 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  campaigns:
+    description: Document representing an unfiltered list of campaigns.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        description: ''
+        items:
+          $ref: '#/definitions/campaign'
+        type: array
+      expand:
+        description: The list of expands set for the search request. Expands are optional.
+        items:
+          type: string
+        type: array
+      next:
+        description: The URL of the next result page.
+        type: string
+      previous:
+        description: The URL of the previous result page.
+        type: string
+      select:
+        description: The fields that you want to select.
+        type: string
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+  campaign:
+    description: Document representing a campaign.
+    properties:
+      campaign_id:
+        description: The ID of the campaign.
+        x-label:
+          default: ID
+        maxLength: 256
+        minLength: 1
+        type: string
+      coupons:
+        description: The array of assigned coupon IDs, not sorted
+        items:
+          type: string
+        type: array
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      customer_groups:
+        description: The array of assigned customer groups, not sorted
+        items:
+          type: string
+        type: array
+      description:
+        description: The description of the campaign.
+        format: text
+        x-label:
+          default: Description
+        maxLength: 4000
+        type: string
+      enabled:
+        description: The enabled flag for campaign.
+        type: boolean
+      end_date:
+        description: The date that the Scenario ends
+        format: date-time
+        x-label:
+          default: End Date
+        type: string
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      link:
+        description: link for convenience
+        type: string
+      source_code_groups:
+        description: The array of assigned source code groups, not sorted
+        items:
+          type: string
+        type: array
+      start_date:
+        description: The date that the Scenario begins
+        format: date-time
+        x-label:
+          default: Start Date
+        type: string
+paths:
+  /sites/{site_id}/coupons/{coupon_id}/campaigns:
+    get:
+      description: Get the campaigns that have a coupon assigned to them either directly
+        or through promotions
+      operationId: getSitesByIDCouponsByIDCampaigns
+      parameters:
+      - description: The site context.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: The id of the coupon that is assigned to campaigns directly or
+          through promotions.
+        in: path
+        name: coupon_id
+        required: true
+        type: string
+      - description: Optional start index for retrieving the campaigns (default 0).
+        format: int32
+        in: query
+        name: start
+        type: integer
+      - description: Optional count for retrieving the campaigns (default is 25).
+        format: int32
+        in: query
+        name: count
+        type: integer
+      - description: ''
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/campaigns'
+        '404':
+          description: '`CouponNotFoundException` - Thrown if the coupon does not
+            exist matching the given id.'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

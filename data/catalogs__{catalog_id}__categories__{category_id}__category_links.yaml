@@ -1,0 +1,175 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  category_link:
+    description: Document representing a category link
+    properties:
+      last_modified:
+        description: The date the link was last modified
+        format: date-time
+        type: string
+      link:
+        description: URL that is used to get this instance
+        type: string
+      position:
+        description: The position in the source catalog / category for this link relative
+          to the other links in the same category.
+        format: double
+        minimum: 0
+        type: number
+      source_catalog_id:
+        description: The source catalog for the link
+        type: string
+      source_catalog_name:
+        additionalProperties:
+          type: string
+        description: The name of the source catalog
+        format: localized
+        type: object
+      source_category_id:
+        description: The source category for the link
+        type: string
+      source_category_name:
+        additionalProperties:
+          type: string
+        description: The name of the source category
+        format: localized
+        type: object
+      target_catalog_id:
+        description: The target category for the link
+        type: string
+      target_catalog_name:
+        additionalProperties:
+          type: string
+        description: The name of the target catalog
+        format: localized
+        type: object
+      target_category_id:
+        description: The target category for the link
+        type: string
+      target_category_name:
+        additionalProperties:
+          type: string
+        description: The name of the target category
+        format: localized
+        type: object
+      type:
+        description: The link type
+        enum:
+        - other
+        - accessories
+        - cross_selling
+        - up_selling
+        - spare_parts
+        type: string
+  category_links:
+    description: Document representing an unfiltered list of category links.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        description: ''
+        items:
+          $ref: '#/definitions/category_link'
+        type: array
+      expand:
+        description: The list of expands set for the search request. Expands are optional.
+        items:
+          type: string
+        type: array
+      next:
+        description: The URL of the next result page.
+        type: string
+      previous:
+        description: The URL of the previous result page.
+        type: string
+      select:
+        description: The fields that you want to select.
+        type: string
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+paths:
+  /catalogs/{catalog_id}/categories/{category_id}/category_links:
+    get:
+      description: Action to get a set of outgoing category links in a given catalog
+        category, sorted by position.
+      operationId: getCatalogsByIDCategoriesByIDCategoryLinks
+      parameters:
+      - description: The id of the catalog.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the source category.
+        in: path
+        minLength: 1
+        name: category_id
+        required: true
+        type: string
+      - description: ''
+        format: int32
+        in: query
+        name: start
+        type: integer
+      - description: ''
+        format: int32
+        in: query
+        name: count
+        type: integer
+      - description: Optional select clause for getting fields from the returned JSON
+          document.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/category_links'
+        '404':
+          description: '`CatalogNotFoundException` - Thrown in case the source catalog
+            does not exist or `CategoryNotFoundException` - Thrown in case the source
+            category does not exist'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs

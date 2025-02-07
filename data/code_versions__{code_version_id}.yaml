@@ -1,0 +1,183 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  code_version:
+    description: Document representing a code version
+    properties:
+      activation_time:
+        description: The code version activation time.
+        format: date-time
+        type: string
+      active:
+        description: Use this method to determine, if this code version is currently
+          active.
+        type: boolean
+      cartridges:
+        description: A list containing the names of all cartridges participating in
+          this code version.
+        items:
+          type: string
+        type: array
+      compatibility_mode:
+        description: The code version compatibility mode.
+        type: string
+      id:
+        description: The code version id.
+        type: string
+      last_modification_time:
+        description: The last time, when the code version was changed.
+        format: date-time
+        type: string
+      rollback:
+        description: Use this method to determine, if this code version is the current
+          rollback version.
+        type: boolean
+      total_size:
+        description: Returns the total size of the file system content of this code
+          version in bytes.
+        format: int64
+        type: integer
+      web_dav_url:
+        description: Returns the HTTPS based WebDAV URL that can be used to access
+          the code version resources.
+        type: string
+paths:
+  /code_versions/{code_version_id}:
+    delete:
+      description: Delete a code version.
+      operationId: deleteCodeVersionsByID
+      parameters:
+      - description: The id of the code version.
+        in: path
+        minLength: 1
+        name: code_version_id
+        required: true
+        type: string
+      responses:
+        '400':
+          description: "`CodeVersionModificationException` - Indicates that a code\
+            \ version with the given id can't be \n         deleted (because it is\
+            \ active)."
+        '204':
+          description: ''
+        '404':
+          description: '`CodeVersionIdNotFoundException` - Indicates that a code version
+            with the given id was not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - code_versions
+    get:
+      description: Read a code version.
+      operationId: getCodeVersionsByID
+      parameters:
+      - description: The id of the code version.
+        in: path
+        minLength: 1
+        name: code_version_id
+        required: true
+        type: string
+      - description: The expand parameter. Allowed value (size).
+        in: query
+        items:
+          type: string
+        name: expand
+        type: array
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/code_version'
+        '404':
+          description: '`CodeVersionIdNotFoundException` - Indicates that a code version
+            with the given id was not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - code_versions
+    patch:
+      description: "Update an existing code version.\n \n  - Only an inactive code\
+        \ version can be updated.\n  - Only the active flag and the id can be changed.\
+        \ The active flag can therefore only set to \"true\". \n  - To set the active\
+        \ flag to \"false\" will not work.\n "
+      operationId: patchCodeVersionsByID
+      parameters:
+      - description: The id of the code version.
+        in: path
+        minLength: 1
+        name: code_version_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/code_version'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/code_version'
+        '400':
+          description: '`CodeVersionModificationException` - Indicates that a code
+            version with the given id can''t be updated (because it is active).'
+        '404':
+          description: '`CodeVersionIdNotFoundException` - Indicates that a code version
+            with the given id was not found.'
+        '409':
+          description: '`CodeVersionIdAlreadyExistsException` - Indicates that a code
+            version with the given id already exists.'
+      security:
+      - oauth2_application: []
+      tags:
+      - code_versions
+    put:
+      description: Create a new code version.
+      operationId: putCodeVersionsByID
+      parameters:
+      - description: The id of the code version.
+        in: path
+        minLength: 1
+        name: code_version_id
+        required: true
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/code_version'
+        '409':
+          description: '`CodeVersionIdAlreadyExistsException` - Indicates that a code
+            version with the given id already exists.'
+      security:
+      - oauth2_application: []
+      tags:
+      - code_versions

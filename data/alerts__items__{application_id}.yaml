@@ -1,0 +1,113 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  alert_item:
+    description: Document describing a single alert.
+    properties:
+      application_context_path:
+        description: The application context path.
+        minLength: 1
+        type: string
+      application_id:
+        description: The application ID.
+        minLength: 1
+        type: string
+      context_object_id:
+        description: The context object id.
+        type: string
+      description:
+        description: The description.
+        minLength: 1
+        type: string
+      display_message:
+        description: The display message.
+        minLength: 1
+        type: string
+      link:
+        description: URL for this resource.
+        minLength: 1
+        type: string
+      message_id:
+        description: The message ID.
+        minLength: 1
+        type: string
+      remediation_action:
+        description: The remediation action.
+        minLength: 1
+        type: string
+      user_priority:
+        description: The user priority.
+        enum:
+        - not_allowed
+        - hidden
+        - informational
+        - warning
+        - action_required
+        minLength: 1
+        type: string
+  alert_items:
+    description: Document containing a collection of alerts.
+    properties:
+      data:
+        description: Collection of alerts
+        items:
+          $ref: '#/definitions/alert_item'
+        type: array
+paths:
+  /alerts/items/{application_id}:
+    get:
+      description: Gets a collection of alerts for the given application context
+      operationId: getAlertsItemsByID
+      parameters:
+      - description: The application ID.
+        in: path
+        minLength: 1
+        name: application_id
+        required: true
+        type: string
+      - description: The application context path (optional).
+        in: query
+        name: application_context_path
+        type: string
+      - description: The context object ID (optional). Use '-' to indicate that only
+          alerts without a context object should be returned.
+        in: query
+        name: context_object_id
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/alert_items'
+      security:
+      - oauth2_application: []
+      tags:
+      - alerts

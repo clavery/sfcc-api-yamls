@@ -1,0 +1,408 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  ab_test_group:
+    description: Document representing an A/B Test Group
+    properties:
+      allocation:
+        description: Test Group percentage allocation
+        format: int32
+        type: integer
+      custom_experience:
+        description: Flag to determine if this Test Group is a customer experience
+        type: boolean
+      description:
+        description: Test Group description
+        type: string
+      id:
+        description: Test group id
+        type: string
+  ab_test_segment:
+    description: Document representing an A/B Test Segment
+    properties:
+      allocation:
+        description: Test Group percentage allocation
+        format: int32
+        type: integer
+      custom_experience:
+        description: Flag to determine if this Test Group is a customer experience
+        type: boolean
+      description:
+        description: Test Group description
+        maxLength: 4000
+        type: string
+      id:
+        description: Test group id
+        maxLength: 40
+        minLength: 1
+        type: string
+      link:
+        description: ''
+        type: string
+      promotions:
+        description: Promotions which this segment has as experiences
+        items:
+          type: object
+        type: array
+      slot_configs:
+        description: Slot configurations which this segment has as experiences
+        items:
+          type: object
+        type: array
+      sorting_rules:
+        description: Sorting rules which this segment has as experiences
+        items:
+          type: object
+        type: array
+      stats:
+        $ref: '#/definitions/ab_test_segment_stats'
+        description: Statistics about the segment
+  ab_test:
+    description: The id of the A/B Test
+    properties:
+      customer_groups:
+        description: The list of customer group ids assigned to the A/B Test. Defaults
+          to 'Everyone' if not specified on create
+        items:
+          type: string
+        type: array
+      description:
+        description: The optional description of the A/B Test
+        maxLength: 4000
+        type: string
+      email_addresses:
+        description: The optional list of email addresses to send A/B Test results
+        items:
+          type: string
+        type: array
+      enabled:
+        description: The flag representing the enabled state of the A/B Test. Defaults
+          to false if not specified on create
+        type: boolean
+      end_date:
+        description: The date that the A/B Test ends. Defaults to two weeks from creation
+          date if both start and end dates are not specified on create
+        format: date-time
+        type: string
+      expiration_type:
+        description: The participant expiration type of the A/B Test. Defaults to
+          'never' if not specified on create
+        enum:
+        - session
+        - never
+        type: string
+      id:
+        description: The id of the A/B Test
+        maxLength: 40
+        minLength: 1
+        type: string
+      key_metric_id:
+        description: The key metric that is most important to the A/B Test, among
+          the metrics collected. Defaults to 'Revenue' if not specified from test
+          participant activity
+        maxLength: 256
+        type: string
+      link:
+        description: The URL to get the A/B test. This is a computed attribute and
+          cannot be modified
+        type: string
+      paused:
+        description: The flag representing the paused state of the A/B Test. Defaults
+          to false if not specified on create
+        type: boolean
+      segment_count:
+        description: Segment count of A/B test. This is a computed attribute and cannot
+          be modified
+        format: int32
+        type: integer
+      start_date:
+        description: The date that the A/B Test begins. Defaults to a week from creation
+          date if both start and end dates are not specified on create
+        format: date-time
+        type: string
+      status:
+        description: Status of A/B test. This is a computed attribute and cannot be
+          modified
+        enum:
+        - ended
+        - planned
+        - running
+        type: string
+      tags:
+        description: The optional list of tags to group similar A/B Tests so that
+          they can be searched easily.
+        items:
+          type: string
+        type: array
+      test_groups:
+        description: Test Groups created for an A/B Test. This is a read only attribute
+          for now.
+        items:
+          $ref: '#/definitions/ab_test_group'
+        type: array
+      test_segments:
+        description: Test Segments created for an A/B Test. This is a read only attribute
+          for now
+        items:
+          $ref: '#/definitions/ab_test_segment'
+        type: array
+      trigger:
+        $ref: '#/definitions/ab_test_trigger'
+        description: The trigger that allows the test participant to be considered
+          for an A/B Test
+  ab_tests:
+    description: Request document containing a set of ABTests
+    properties:
+      count:
+        format: int32
+        type: integer
+      data:
+        description: ''
+        items:
+          $ref: '#/definitions/ab_test'
+        type: array
+      expand:
+        items:
+          type: string
+        type: array
+      next:
+        type: string
+      previous:
+        type: string
+      select:
+        type: string
+      start:
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        format: int32
+        type: integer
+  ab_test_trigger:
+    description: Document representing an A/B Test trigger.
+    properties:
+      categories:
+        description: The list of categories. This is a modifiable attribute when trigger
+          type is 'category_page_view' only
+        items:
+          type: string
+        type: array
+      is_pipeline_based:
+        description: The flag indicating if the trigger is based on pipelines. This
+          is a computed attribute and cannot be modified
+        type: boolean
+      pipeline_calls:
+        description: The list of pipeline name and start node combinations (for example,
+          Account-Show). This is a modifiable attribute when trigger type is 'pipeline_calls'
+          only
+        items:
+          type: string
+        type: array
+      trigger_type:
+        description: The type of the trigger. Defaults to 'immediately' if not specified
+          on create
+        enum:
+        - immediately
+        - category_page_view
+        - home_page_view
+        - pipeline_call
+        type: string
+  ab_test_segment_stats:
+    properties:
+      adds_to_baskets:
+        description: ''
+        format: int32
+        type: integer
+      average_adds_per_basket:
+        description: ''
+        format: double
+        type: number
+      average_adds_per_basket_std_error:
+        description: ''
+        format: double
+        type: number
+      average_discount_amount:
+        description: ''
+        format: double
+        type: number
+      average_discount_amount_std_error:
+        description: ''
+        format: double
+        type: number
+      average_discount_amount_with_coupon:
+        description: ''
+        format: double
+        type: number
+      average_discount_amount_with_coupon_std_error:
+        description: ''
+        format: double
+        type: number
+      average_discount_amount_without_coupon:
+        description: The standard error for the average amount discounted for orders
+          without using a coupon
+        format: double
+        type: number
+      average_discount_amount_without_coupon_std_error:
+        description: Units sold per hour
+        format: double
+        type: number
+      average_order_value:
+        description: ''
+        format: double
+        type: number
+      average_order_value_std_error:
+        description: ''
+        format: double
+        type: number
+      average_revenue_per_visit:
+        description: ''
+        format: double
+        type: number
+      average_revenue_per_visit_std_error:
+        description: ''
+        format: double
+        type: number
+      average_units_added_per_basket:
+        description: ''
+        format: double
+        type: number
+      average_units_adder_per_basket_std_error:
+        description: ''
+        format: double
+        type: number
+      average_units_per_order_std_error:
+        description: ''
+        format: double
+        type: number
+      average_units_per_visit:
+        description: ''
+        format: double
+        type: number
+      average_units_per_visit_std_error:
+        description: ''
+        format: double
+        type: number
+      basket_rate:
+        description: ''
+        format: double
+        type: number
+      baskets:
+        description: ''
+        format: double
+        type: number
+      checkout_rate:
+        description: ''
+        format: double
+        type: number
+      checkouts:
+        description: ''
+        format: int32
+        type: integer
+      conversion_rate:
+        description: ''
+        format: double
+        type: number
+      discount_amount_with_coupon:
+        description: ''
+        format: double
+        type: number
+      discount_amount_without_coupon:
+        description: ''
+        format: double
+        type: number
+      orders:
+        description: ''
+        format: int32
+        type: integer
+      revenue:
+        description: ''
+        format: double
+        type: number
+      total_discount_amount:
+        description: ''
+        format: double
+        type: number
+      units:
+        description: ''
+        format: double
+        type: number
+      units_added_to_baskets:
+        description: ''
+        format: double
+        type: number
+      visitors:
+        description: ''
+        format: int32
+        type: integer
+      visits:
+        description: ''
+        format: int32
+        type: integer
+paths:
+  /sites/{site_id}/ab_tests:
+    get:
+      description: Action to get all the A/B tests with searching.
+      operationId: getSitesByIDAbTests
+      parameters:
+      - description: ID of the site that the A/B tests are contained within.
+        in: path
+        maxLength: 256
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: Optional start index for retrieving the items from a given index
+          (default 0).
+        format: int32
+        in: query
+        minimum: 0
+        name: start
+        type: integer
+      - description: Optional count for retrieving only a subset of the items (default
+          is 25).
+        format: int32
+        in: query
+        minimum: 0
+        name: count
+        type: integer
+      - description: The property selector.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/ab_tests'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

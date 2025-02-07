@@ -1,0 +1,114 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  custom_log_settings:
+    description: Document representing custom logging settings.
+    properties:
+      debug_permitted:
+        description: False if the current instance is production.
+        type: boolean
+      debug_to_file:
+        description: Indicates if custom debug logs are written to file.
+        type: boolean
+      email_to:
+        description: Email addresses for fatal log messages with a maximum length
+          of 1000 characters.
+        maxLength: 1000
+        type: string
+      error_to_file:
+        description: Indicates if custom error logs are written to file.
+        type: boolean
+      fatal_to_file:
+        description: Indicates if custom fatal logs are written to file.
+        type: boolean
+      info_to_file:
+        description: Indicates if custom info logs are written to file.
+        type: boolean
+      log_categories:
+        description: Defined custom log categories.
+        items:
+          $ref: '#/definitions/log_category'
+        type: array
+      root_level:
+        description: Custom root category log level.
+        type: string
+      warn_to_file:
+        description: Indicates if custom warn logs are written to file.
+        type: boolean
+  log_category:
+    description: Document representing log category settings.
+    properties:
+      enabled:
+        description: Returns true if the log category is enabled.
+        type: boolean
+      level:
+        description: Level of the log category.
+        type: string
+      name:
+        description: Log category name.
+        type: string
+paths:
+  /settings/logging/custom:
+    get:
+      description: Action to get custom log settings.
+      operationId: getSettingsLoggingCustom
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/custom_log_settings'
+      security:
+      - oauth2_application: []
+      tags:
+      - settings
+    patch:
+      description: Updates the custom log settings.
+      operationId: patchSettingsLoggingCustom
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/custom_log_settings'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/custom_log_settings'
+        '400':
+          description: '`InvalidRecipientEmailException` - if the email addresses
+            are invalid. or `InvalidCustomLogCategoryException` - if one of the categories
+            names are invalid. or `InvalidLogLevelException` - if on a production
+            instance the configured level is DEBUG.'
+      security:
+      - oauth2_application: []
+      tags:
+      - settings

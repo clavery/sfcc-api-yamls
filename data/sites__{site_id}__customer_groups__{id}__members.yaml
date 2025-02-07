@@ -1,0 +1,183 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  customer_group_member:
+    description: Document representing a customer group member
+    properties:
+      active:
+        description: A flag indicating whether the customer is enabled and can log
+          in.
+        type: boolean
+      c_familyStatus:
+        x-label:
+          default: Family Status
+        type: string
+      c_location:
+        description: The shopper's specified location.
+        format: text
+        x-label:
+          default: The shopper's specified location.
+        type: string
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      customer_link:
+        description: The link to the customer resource.
+        maxLength: 256
+        type: string
+      customer_no:
+        description: The customers number (id).
+        x-label:
+          default: Customer No.
+        maxLength: 100
+        type: string
+      email:
+        description: The customer's email address.
+        format: email
+        x-label:
+          default: Email
+        maxLength: 256
+        type: string
+      first_name:
+        description: The customer's first name.
+        x-label:
+          default: First Name
+        maxLength: 256
+        type: string
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      last_name:
+        description: The customer's last name.
+        x-label:
+          default: Last Name
+        maxLength: 256
+        type: string
+      link:
+        description: The link to the customer group member resource.
+        maxLength: 256
+        type: string
+      login:
+        description: The login of the customer.
+        maxLength: 256
+        type: string
+  customer_group_members:
+    description: Document representing an unfiltered list of customer groups.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        description: ''
+        items:
+          $ref: '#/definitions/customer_group_member'
+        type: array
+      expand:
+        description: The list of expands set for the search request. Expands are optional.
+        items:
+          type: string
+        type: array
+      next:
+        description: The URL of the next result page.
+        type: string
+      previous:
+        description: The URL of the previous result page.
+        type: string
+      select:
+        description: The fields that you want to select.
+        type: string
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+paths:
+  /sites/{site_id}/customer_groups/{id}/members:
+    get:
+      description: 'Action to get all the customer group members with no filtering.
+        For dynamic customer groups and the system groups "Everyone" and "Unregistered"
+        no result is returned (Status Code: 204 - No Content).'
+      operationId: getSitesByIDCustomerGroupsByIDMembers
+      parameters:
+      - description: ''
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: ''
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - description: Optional start index for retrieving the items from a given index
+          (default 0).
+        format: int32
+        in: query
+        name: start
+        type: integer
+      - description: Optional count for retrieving only a subset of the items (default
+          is 25).
+        format: int32
+        in: query
+        name: count
+        type: integer
+      - description: The property selector.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer_group_members'
+        '404':
+          description: '`CustomerGroupNotFoundException` - Thrown in case the customer
+            group does not exist matching the given id'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

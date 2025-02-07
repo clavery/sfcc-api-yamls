@@ -1,0 +1,274 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  money:
+    properties:
+      currency_mnemonic:
+        description: The mnemonic for the money.
+        type: string
+      value:
+        description: The value for the money.
+        format: double
+        type: number
+  product_option_value:
+    description: Document representing a product option Value
+    properties:
+      default_product_option_value:
+        description: Flag indicating if the product option value is the default value
+          for the product option.
+        type: boolean
+      id:
+        description: The id of the product option value.
+        minLength: 1
+        type: string
+      link:
+        description: The URL link to the product option value.
+        type: string
+      option_prices:
+        description: The list of prices in the product option value.
+        items:
+          $ref: '#/definitions/money'
+        type: array
+      sku_extension:
+        description: The sku extension of the product option value.
+        type: string
+      value:
+        additionalProperties:
+          type: string
+        description: The localized value of the product option.
+        format: localized
+        type: object
+  media_file:
+    properties:
+      abs_url:
+        description: The absolute URL with request protocol (read only)
+        type: string
+      alt:
+        additionalProperties:
+          type: string
+        description: The alternative image text
+        format: localized
+        type: object
+      dis_base_url:
+        description: The DIS base URL only for product images
+        type: string
+      path:
+        description: "The raw media file path\n (only this needs to be provided in\
+          \ update request)"
+        type: string
+      title:
+        additionalProperties:
+          type: string
+        description: The image title
+        format: localized
+        type: object
+  product_option:
+    description: Document representing a product option
+    properties:
+      custom_name:
+        additionalProperties:
+          type: string
+        description: The localized custom name of the product option.
+        format: localized
+        type: object
+      default_product_option_value:
+        description: The default product option value.
+        type: string
+      description:
+        additionalProperties:
+          type: string
+        description: The localized description of the product option.
+        format: localized
+        type: object
+      id:
+        description: The object attribute definition id which is also the identifier
+          for the product option.
+        minLength: 1
+        type: string
+      image:
+        $ref: '#/definitions/media_file'
+        description: The image assigned to the product option.
+      link:
+        description: The URL link to the product option.
+        type: string
+      name:
+        description: The name of the object attribute definition.
+        type: string
+      selected_option_value:
+        description: The selected option value of the product option.
+        type: string
+      shared:
+        description: The flag that indicates if the product option is shared or local.
+        type: boolean
+      sorting_mode:
+        description: The sorting mode for the product option values.
+        enum:
+        - byexplicitorder
+        - byoptionprice
+        type: string
+      values:
+        description: The sorted array of values of the product option.
+        items:
+          $ref: '#/definitions/product_option_value'
+        type: array
+paths:
+  /catalogs/{catalog_id}/shared_product_options/{id}:
+    delete:
+      description: Deletes a shared product option by ID.
+      operationId: deleteCatalogsByIDSharedProductOptionsByID
+      parameters:
+      - description: The id of the catalog.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the shared product option.
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        '204':
+          description: ''
+        '404':
+          description: '`ProductOptionNotFoundException` - Indicates the shared product
+            option is not found. or `CatalogNotFoundException` - Indicates the catalog
+            is not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    get:
+      description: Read a shared product option in a catalog.
+      operationId: getCatalogsByIDSharedProductOptionsByID
+      parameters:
+      - description: The id of the catalog.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the shared product option.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - description: The currency mnemonic for retrieving the product option values
+          according to the sorting mode.ex:'USD'
+        in: query
+        name: currency
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/product_option'
+        '404':
+          description: '`ProductOptionNotFoundException` - Indicates the shared product
+            option is not found. or `CatalogNotFoundException` - Indicates the catalog
+            is not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    patch:
+      description: Updates a shared product option with the information provided.
+      operationId: patchCatalogsByIDSharedProductOptionsByID
+      parameters:
+      - description: The id of the catalog.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the shared product option.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/product_option'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/product_option'
+        '404':
+          description: '`CatalogNotFoundException` - Indicates the catalog is not
+            found. or `ProductOptionNotFoundException` - Indicates the shared product
+            option is not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs
+    put:
+      description: Creates a shared product option using the information provided.
+      operationId: putCatalogsByIDSharedProductOptionsByID
+      parameters:
+      - description: The id of the catalog.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: The id of the shared product option.
+        in: path
+        minLength: 1
+        name: id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/product_option'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/product_option'
+        '400':
+          description: '`ProductOptionDuplicateException` - Indicates the shared product
+            option is a duplicate.'
+        '404':
+          description: '`AttributeDefinitionNotFoundException` - Indicates the id
+            specified is not a valid attribute definition. or `CatalogNotFoundException`
+            - Indicates the catalog is not found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs

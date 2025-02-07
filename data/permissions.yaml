@@ -1,0 +1,289 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  menu_item:
+    description: Document representing a menu item.
+    properties:
+      display_name:
+        additionalProperties:
+          type: string
+        description: The display name of the menu item.
+        format: localized
+        type: object
+      menu_actions:
+        description: The collection of available menu actions.
+        items:
+          $ref: '#/definitions/menu_action'
+        type: array
+      module_type:
+        description: The module type of the menu item (BM or CC).
+        type: string
+      name:
+        description: The name of the menu item.
+        type: string
+      type:
+        description: The permission type.
+        type: string
+  locale_permissions:
+    description: Document representing the available locale permissions.
+    properties:
+      scopes:
+        description: The available Locale permission scopes (e.g. unscoped).
+        items:
+          type: string
+        type: array
+      unscoped:
+        description: The collection of available unscoped Locale permissions.
+        items:
+          $ref: '#/definitions/locale_permission'
+        type: array
+  webdav_permission:
+    description: Document representing a WebDAV permission.
+    properties:
+      description:
+        additionalProperties:
+          type: string
+        description: The description of the WebDAV permission.
+        format: localized
+        type: object
+      folder:
+        description: The folder of the WebDAV permission.
+        type: string
+      type:
+        description: The permission type.
+        type: string
+      values:
+        description: The list of possible values for the WebDAV permission, e.g. ACCESS
+          or READONLY.
+        items:
+          type: string
+        type: array
+  functional_permission:
+    description: Document representing a functional permission.
+    properties:
+      description:
+        additionalProperties:
+          type: string
+        description: The description of the functional permission.
+        format: localized
+        type: object
+      display_name:
+        additionalProperties:
+          type: string
+        description: The display name of the functional permission.
+        format: localized
+        type: object
+      name:
+        description: The name of the functional permission.
+        type: string
+      type:
+        description: The permission type.
+        type: string
+      values:
+        description: The list of possible values for the functional permission, e.g.
+          ACCESS or READONLY.
+        items:
+          type: string
+        type: array
+  bmpermissions:
+    properties:
+      functional:
+        $ref: '#/definitions/functional_permissions'
+      functional_link:
+        type: string
+      locale:
+        $ref: '#/definitions/locale_permissions'
+      locale_link:
+        type: string
+      module:
+        $ref: '#/definitions/module_permissions'
+      module_link:
+        type: string
+      types:
+        items:
+          type: string
+        type: array
+      webdav:
+        $ref: '#/definitions/webdav_permissions'
+      webdav_link:
+        type: string
+  menu_action:
+    description: Document representing a menu action.
+    properties:
+      description:
+        additionalProperties:
+          type: string
+        description: The description of the menu action.
+        format: localized
+        type: object
+      display_name:
+        additionalProperties:
+          type: string
+        description: The display name of the menu action.
+        format: localized
+        type: object
+      module_type:
+        description: The module type of the menu action (BM or CC).
+        type: string
+      name:
+        description: The name of the menu action.
+        type: string
+      system:
+        description: "{@code true} if the menu action is a system menu action. {@code\
+          \ false} if the menu action is a custom menu\n action."
+        type: boolean
+      type:
+        description: The permission type.
+        type: string
+      values:
+        description: The list of possible values for the menu action, e.g. ACCESS
+          or READONLY.
+        items:
+          type: string
+        type: array
+  application_permissions:
+    description: Document representing the available applications for retrieving permissions.
+    properties:
+      applications:
+        description: The available applications (e.g. 'bm' for Business Manager).
+        items:
+          type: string
+        type: array
+      bm:
+        $ref: '#/definitions/bmpermissions'
+        description: The permissions of application 'bm'.
+      csc:
+        $ref: '#/definitions/cscpermissions'
+        description: The permissions of application 'csc'.
+  webdav_permissions:
+    description: Document representing the available WebDAV permissions.
+    properties:
+      scopes:
+        description: The available WebDAV permission scopes (e.g. unscoped).
+        items:
+          type: string
+        type: array
+      unscoped:
+        description: The collection of available unscoped WebDAV permissions.
+        items:
+          $ref: '#/definitions/webdav_permission'
+        type: array
+  module_permissions:
+    description: Document representing the available module permissions in shape of
+      menu items and menu actions.
+    properties:
+      organization:
+        description: The collection of available organization menu items.
+        items:
+          $ref: '#/definitions/menu_item'
+        type: array
+      scopes:
+        description: The available menu item scopes (e.g. organization, site).
+        items:
+          type: string
+        type: array
+      site:
+        description: The list of available site menu items.
+        items:
+          $ref: '#/definitions/menu_item'
+        type: array
+  cscpermissions:
+    properties:
+      module:
+        $ref: '#/definitions/module_permissions'
+      module_link:
+        type: string
+      types:
+        items:
+          type: string
+        type: array
+  locale_permission:
+    description: Document representing a locale permission.
+    properties:
+      display_name:
+        additionalProperties:
+          type: string
+        description: The display name of the locale.
+        format: localized
+        type: object
+      locale_id:
+        description: The id of the locale.
+        type: string
+      type:
+        description: The permission type.
+        type: string
+      values:
+        description: The list of possible values for the locale permission, e.g. ACCESS
+          or READONLY.
+        items:
+          type: string
+        type: array
+  functional_permissions:
+    description: Document representing the available functional permissions.
+    properties:
+      organization:
+        description: The collection of available organization functional permissions.
+        items:
+          $ref: '#/definitions/functional_permission'
+        type: array
+      scopes:
+        description: The available functional permission scopes (e.g. organization,
+          site).
+        items:
+          type: string
+        type: array
+      site:
+        description: The list of available site functional permissions.
+        items:
+          $ref: '#/definitions/functional_permission'
+        type: array
+paths:
+  /permissions:
+    get:
+      description: Get application specific permissions per type.
+      operationId: getPermissions
+      parameters:
+      - description: The permission expand. A comma separated list with the allowed
+          values (bm, csc).
+        in: query
+        items:
+          type: string
+        name: expand
+        type: array
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/application_permissions'
+      security:
+      - oauth2_application: []
+      tags:
+      - permissions

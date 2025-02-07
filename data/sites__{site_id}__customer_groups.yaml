@@ -1,0 +1,165 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  customer_group:
+    description: Document representing a customer group
+    properties:
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      description:
+        description: The description for the customer group.  This property is read-only
+          for system groups.
+        x-label:
+          default: Description
+        type: string
+      id:
+        description: "The user specific identifier for the customer group, which must\
+          \ be unique across the organization.  Property\n is read-only."
+        x-label:
+          default: ID
+        maxLength: 256
+        minLength: 1
+        readOnly: true
+        type: string
+      in_deletion:
+        description: The deletion status of this customer group.
+        type: boolean
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      link:
+        description: URL that is used to get this instance.  This property is computed
+          and cannot be modified.
+        type: string
+      member_count:
+        description: The number of members in this customer group.
+        format: int32
+        type: integer
+      rule:
+        $ref: '#/definitions/rule'
+        description: The rule of this customer group. Only available for dynamic customer
+          groups.
+      type:
+        description: The type of the customer group.  This property is read-only.
+        enum:
+        - system
+        - dynamic
+        - static
+        type: string
+  customer_groups:
+    description: Document representing an unfiltered list of customer groups.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        description: ''
+        items:
+          $ref: '#/definitions/customer_group'
+        type: array
+      expand:
+        description: The list of expands set for the search request. Expands are optional.
+        items:
+          type: string
+        type: array
+      next:
+        description: The URL of the next result page.
+        type: string
+      previous:
+        description: The URL of the previous result page.
+        type: string
+      select:
+        description: The fields that you want to select.
+        type: string
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+  rule:
+    description: Document representing a customer group rule
+    properties:
+      description:
+        description: The description of the rule, describing its conditions in natural
+          language. Property is read-only.
+        type: string
+paths:
+  /sites/{site_id}/customer_groups:
+    get:
+      description: Action to get all the customer groups with no filtering.
+      operationId: getSitesByIDCustomerGroups
+      parameters:
+      - description: The site context.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: Optional start index for retrieving the items from a given index
+          (default 0).
+        format: int32
+        in: query
+        name: start
+        type: integer
+      - description: Optional count for retrieving only a subset of the items (default
+          is 25).
+        format: int32
+        in: query
+        name: count
+        type: integer
+      - description: The property selector.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer_groups'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites

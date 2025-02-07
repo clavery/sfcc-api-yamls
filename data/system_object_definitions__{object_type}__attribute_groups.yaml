@@ -1,0 +1,341 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  object_attribute_groups:
+    description: Document representing an unfiltered list of object group definitions.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        description: ''
+        items:
+          $ref: '#/definitions/object_attribute_group'
+        type: array
+      expand:
+        description: The list of expands set for the search request. Expands are optional.
+        items:
+          type: string
+        type: array
+      next:
+        description: The URL of the next result page.
+        type: string
+      previous:
+        description: The URL of the previous result page.
+        type: string
+      select:
+        description: The fields that you want to select.
+        type: string
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+  object_attribute_definition:
+    description: Document representing a attribute definition
+    properties:
+      creation_date:
+        format: date-time
+        type: string
+      default_value:
+        $ref: '#/definitions/object_attribute_value_definition'
+        description: The default value of this attribute. It can be updated, but not
+          created.
+      description:
+        additionalProperties:
+          type: string
+        description: The localized description of the attribute.
+        format: localized
+        type: object
+      display_name:
+        additionalProperties:
+          type: string
+        description: The localized name presented to the user in forms.
+        format: localized
+        type: object
+      effective_id:
+        description: The effective ID, which is c_id if the attribute is custom, and
+          just the id otherwise. It is read only.
+        type: string
+      externally_defined:
+        description: Flag indicating if this attribute is externally defined.
+        type: boolean
+      externally_managed:
+        description: Flag indicating if this attribute is externally managed.
+        type: boolean
+      field_height:
+        description: The height of the field for this attribute in the editor.
+        format: int32
+        type: integer
+      field_length:
+        description: The length of the field for this attribute in the editor.
+        format: int32
+        type: integer
+      id:
+        description: The user supplied ID of the attribute.
+        type: string
+      key:
+        description: Flag indicating if this is a key attribute.
+        type: boolean
+      last_modified:
+        format: date-time
+        type: string
+      link:
+        description: The URL that is used to get this instance.  Value is computed
+          and read-only.
+        type: string
+      localizable:
+        description: Flag indicating if this attribute can be localized.
+        type: boolean
+      mandatory:
+        description: Flag indicating if a value is mandatory for the attribute.
+        type: boolean
+      max_value:
+        description: The maximum possible value for this attribute.
+        format: double
+        type: number
+      min_length:
+        description: The minimum length of the field for this attribute.
+        format: int32
+        type: integer
+      min_value:
+        description: The minimum possible value for this attribute.
+        format: double
+        type: number
+      multi_value_type:
+        description: "True if the attribute can have multiple values.\n Attributes\
+          \ of the following types are multi-value capable:\n \n - set_of_int\n -\
+          \ set_of_number\n - set_of_string\n \n Additionally, attributes of the following\
+          \ types can be multi-value\n enabled:\n \n - enum_of_int\n - enum_of_string\n\
+          \ "
+        type: boolean
+      order_required:
+        description: "Flag indicating if this attribute is required for order of the\
+          \ attribute model's product. The set of these can be used\n in order line\
+          \ items."
+        type: boolean
+      queryable:
+        description: "Returns true if the attribute definition is explicitly marked\
+          \ queryable. If no explicit queryable is found\n and the attribute value\
+          \ type belongs to a queryable type, true is returned too. In all other cases\
+          \ false is returned.\n Value is computed and read-only."
+        type: boolean
+      read_only:
+        description: Flag indicating if this attribute is read-only. It is read only.
+        type: boolean
+      regular_expression:
+        description: A regular expression that defines the legal values for this attribute.
+        type: string
+      requires_encoding:
+        description: Flag indicating if this attribute can be encoded using the encoding="off"
+          flag in ISML templates. It is read only.
+        type: boolean
+      scale:
+        description: The minimum number of fraction digits for a value of this attribute.
+        format: int32
+        type: integer
+      searchable:
+        description: Flag indicating if this attribute is searchable.
+        type: boolean
+      set_value_type:
+        description: Flag indicating if this attribute is of type 'Set of'. It is
+          read only.
+        type: boolean
+      site_specific:
+        description: Flag indicating if this attribute is site-specific.
+        type: boolean
+      system:
+        description: Flag indicating if this attribute is a system attribute.
+        type: boolean
+      unit:
+        additionalProperties:
+          type: string
+        description: The unit of measure for this attribute.
+        format: localized
+        type: object
+      value_definitions:
+        description: A set of values that are possible for this attribute. It is read
+          only.
+        items:
+          $ref: '#/definitions/object_attribute_value_definition'
+        type: array
+      value_type:
+        description: The type of this attribute.
+        enum:
+        - string
+        - int
+        - double
+        - text
+        - html
+        - date
+        - image
+        - boolean
+        - money
+        - quantity
+        - datetime
+        - email
+        - password
+        - set_of_string
+        - set_of_int
+        - set_of_double
+        - enum_of_string
+        - enum_of_int
+        - unknown
+        type: string
+      visible:
+        description: Flag indicating if this attribute is visible.
+        type: boolean
+  object_attribute_value_definition:
+    description: Document representing a attribute definition
+    properties:
+      description:
+        additionalProperties:
+          type: string
+        description: A description of the attribute value.
+        format: localized
+        type: object
+      display_value:
+        additionalProperties:
+          type: string
+        description: "A display name that can be used to present this value in\n the\
+          \ user interface. For example, the value might be '1' but the display\n\
+          \ name might be 'Order Exported'."
+        format: localized
+        type: object
+      id:
+        description: The ID of the attribute value.
+        type: string
+      position:
+        description: The position of the attribute value within the set of attribute
+          values.
+        format: double
+        type: number
+      value:
+        description: The value of the attribute.
+        type: object
+  object_attribute_group:
+    description: Document representing a attribute group
+    properties:
+      attribute_definitions:
+        description: Attributes with the group displayed when expand=definition
+        items:
+          $ref: '#/definitions/object_attribute_definition'
+        type: array
+      attribute_definitions_count:
+        description: The count of the attributes within the group.  This is a computed
+          attribute and is read-only
+        format: int32
+        type: integer
+      creation_date:
+        format: date-time
+        type: string
+      description:
+        additionalProperties:
+          type: string
+        description: The free-form text description of the group by locale
+        format: localized
+        type: object
+      display_name:
+        additionalProperties:
+          type: string
+        description: The name used to display the group by locale.
+        format: localized
+        type: object
+      id:
+        description: The group's user specified identifier, used to retrieve the group
+        type: string
+      internal:
+        description: True if the group is meant only for internal use, false otherwise.  This
+          property is read-only.
+        type: boolean
+      last_modified:
+        format: date-time
+        type: string
+      link:
+        description: URL that is used to get this instance.  This is a computed attribute
+          and is read-only
+        type: string
+      position:
+        description: The position of the group relative to other groups.
+        format: double
+        minimum: 0
+        type: number
+paths:
+  /system_object_definitions/{object_type}/attribute_groups:
+    get:
+      description: Action to get all the attribute groups with no filtering.
+      operationId: getSystemObjectDefinitionsByIDAttributeGroups
+      parameters:
+      - description: ''
+        in: path
+        name: object_type
+        required: true
+        type: string
+      - description: Optional start index for retrieving the items from a given index
+          (default 0).
+        format: int32
+        in: query
+        name: start
+        type: integer
+      - description: Optional count for retrieving only a subset of the items (default
+          is 25).
+        format: int32
+        in: query
+        name: count
+        type: integer
+      - description: The property selector.
+        in: query
+        name: select
+        type: string
+      - description: ''
+        in: query
+        items:
+          type: string
+        name: expand
+        type: array
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/object_attribute_groups'
+        '404':
+          description: '`ObjectTypeNotFoundException` - in case the object type does
+            not match an existing system type'
+      security:
+      - oauth2_application: []
+      tags:
+      - system_object_definitions

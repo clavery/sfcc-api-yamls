@@ -1,0 +1,85 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  alert_descriptors_revalidation_request:
+    description: Contains parameters for a alert descriptor revalidation request.
+    properties:
+      context_object_id:
+        description: ID of the object in which context messages should be revalidated.
+        type: string
+paths:
+  /alerts/descriptors/{application_id}/{application_context_path}/{message_id}/revalidate:
+    patch:
+      description: Triggers rule validation for all described descriptors. When a
+        validation rule for a descriptor is triggered active alerts might be deleted
+        if the conditions are not met anymore.    Additionally, new alerts might be
+        created if conditions of a descriptor are now met. If the alert descriptor
+        is context-specific, a context object ID needs to be provided in the request
+        body.    The request body can be ued to further restrict the set of descriptors
+        that are validated.
+      operationId: patchAlertsDescriptorsByIDByIDByIDRevalidate
+      parameters:
+      - description: The application ID.
+        in: path
+        minLength: 1
+        name: application_id
+        required: true
+        type: string
+      - description: The application context path.
+        in: path
+        minLength: 1
+        name: application_context_path
+        required: true
+        type: string
+      - description: The message ID.
+        in: path
+        minLength: 1
+        name: message_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/alert_descriptors_revalidation_request'
+      responses:
+        '400':
+          description: '`ContextObjectIdRequiredException` - If the descriptor is
+            context specific but no context object id was provided in the request
+            body.'
+        '204':
+          description: ''
+        '404':
+          description: '`AlertDescriptorNotFoundException` - If no matching alert
+            descriptor was found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - alerts

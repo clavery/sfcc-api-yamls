@@ -1,0 +1,218 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  variation_attribute:
+    description: Document representing a variation attribute.
+    properties:
+      attribute_definition_id:
+        description: The id of the requested attribute definition.
+        type: string
+      attribute_definition_name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation attribute definition.
+        format: localized
+        type: object
+      default_value:
+        description: default variation attribute value
+        type: string
+      id:
+        description: The id of the variation attribute.
+        minLength: 1
+        type: string
+      link:
+        description: URL that is used to get this instance
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation attribute.
+        format: localized
+        type: object
+      shared:
+        description: Returns the value of attribute 'shared' if attribute is local
+          or shared
+        type: boolean
+      slicing:
+        description: Returns the value of attribute 'slicing'.
+        type: boolean
+      values:
+        description: The sorted array of variation values. This array can be empty.
+        items:
+          $ref: '#/definitions/variation_attribute_value'
+        type: array
+      variation_attribute_type:
+        description: variation attribute type
+        enum:
+        - string
+        - int
+        - unknown
+        type: string
+    required:
+    - attribute_definition_id
+  media_file:
+    properties:
+      abs_url:
+        description: The absolute URL with request protocol (read only)
+        type: string
+      alt:
+        additionalProperties:
+          type: string
+        description: The alternative image text
+        format: localized
+        type: object
+      dis_base_url:
+        description: The DIS base URL only for product images
+        type: string
+      path:
+        description: "The raw media file path\n (only this needs to be provided in\
+          \ update request)"
+        type: string
+      title:
+        additionalProperties:
+          type: string
+        description: The image title
+        format: localized
+        type: object
+  variation_attributes:
+    description: Document representing an unfiltered list of variation attributes.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        description: ''
+        items:
+          $ref: '#/definitions/variation_attribute'
+        type: array
+      expand:
+        description: The list of expands set for the search request. Expands are optional.
+        items:
+          type: string
+        type: array
+      next:
+        description: The URL of the next result page.
+        type: string
+      previous:
+        description: The URL of the previous result page.
+        type: string
+      select:
+        description: The fields that you want to select.
+        type: string
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+  variation_attribute_value:
+    description: Document representing a variation attribute value.
+    properties:
+      description:
+        additionalProperties:
+          type: string
+        description: The localized description of the variation value.
+        format: localized
+        type: object
+      image:
+        $ref: '#/definitions/media_file'
+        description: The first product image for the configured viewtype and this
+          variation value.
+      image_swatch:
+        $ref: '#/definitions/media_file'
+        description: The first product image for the configured viewtype and this
+          variation value. (typically the swatch image)
+      link:
+        description: ''
+        type: string
+      name:
+        additionalProperties:
+          type: string
+        description: The localized display name of the variation value.
+        format: localized
+        type: object
+      orderable:
+        description: A flag indicating whether at least one variant with this variation
+          attribute value is available to sell.
+        type: boolean
+      position:
+        description: The position of the value among all values of a variation attribute.
+        format: double
+        type: number
+      value:
+        description: The actual variation value.
+        minLength: 1
+        type: string
+    required:
+    - value
+paths:
+  /catalogs/{catalog_id}/shared_variation_attributes:
+    get:
+      description: Reads variation attributes of a Domain.
+      operationId: getCatalogsByIDSharedVariationAttributes
+      parameters:
+      - description: id of the catalog.
+        in: path
+        minLength: 1
+        name: catalog_id
+        required: true
+        type: string
+      - description: ''
+        format: int32
+        in: query
+        name: start
+        type: integer
+      - description: ''
+        format: int32
+        in: query
+        name: count
+        type: integer
+      - description: ''
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/variation_attributes'
+        '404':
+          description: '`CatalogNotFoundException` - Indicates the catalog is not
+            found.'
+      security:
+      - oauth2_application: []
+      tags:
+      - catalogs

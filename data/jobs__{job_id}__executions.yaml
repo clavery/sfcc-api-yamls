@@ -1,0 +1,405 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  job_execution_retry_information:
+    description: 'Retry information for a previous '
+    properties:
+      current_retry_attempt:
+        description: The current attempt to retry the previous **failed** job execution.
+        format: int32
+        type: integer
+      max_retries:
+        description: The maximum number of retries.
+        format: int32
+        type: integer
+  status:
+    properties:
+      code:
+        description: Status code.
+        type: string
+      message:
+        description: Status message.
+        type: string
+      status:
+        description: Status shows successful operation end.
+        enum:
+        - ok
+        - error
+        type: string
+  job_step_execution:
+    properties:
+      chunk_size:
+        description: The chunk size for a chunk oriented step execution, otherwise
+          null.
+        format: int32
+        type: integer
+      duration:
+        description: Time in milliseconds, the execution was or is running.
+        format: int64
+        type: integer
+      end_time:
+        description: Timestamp, when execution was finished.
+        format: date-time
+        type: string
+      execution_scope:
+        description: The ID of the scope this step is or was executed for.
+        type: string
+      execution_status:
+        description: "Current execution status of the step.\n \n - 'pending': Execution\
+          \ of the step been initiated but the step is not executing yet. Possible\
+          \ next status:\n 'running'.\n - 'running': The step is currently actively\
+          \ executed. Possible next status: 'finished', 'pausing' or\n 'aborted'.\n\
+          \ - 'finished': The step execution is finished and is not actively executed\
+          \ currently. Possible next status:\n none.\n - 'pausing': Pausing of a running\
+          \ step execution has been initiated but the step is not paused yet. Possible\n\
+          \ next status: 'paused' or 'aborted'.\n - 'paused': The step execution is\
+          \ paused and is not actively executed currently. Possible next status:\n\
+          \ 'pending'.\n - 'aborted': A running step execution has been aborted and\
+          \ is not actively executed currently. Possible next\n status: none.\n "
+        enum:
+        - pending
+        - running
+        - pausing
+        - paused
+        - resuming
+        - resumed
+        - restarting
+        - restarted
+        - retrying
+        - retried
+        - aborting
+        - aborted
+        - finished
+        - unknown
+        type: string
+      exit_status:
+        $ref: '#/definitions/status'
+        description: "The exit status of the step execution, if the step execution\
+          \ is in execution status 'finished', 'paused' or\n 'aborted' and is not\
+          \ executed currently anymore."
+      id:
+        description: ID of the execution object.
+        type: string
+      include_steps_from_job_id:
+        description: ID of the job the step of this step execution was included from,
+          if the step was included from another job.
+        type: string
+      is_chunk_oriented:
+        description: True if this execution represents a chunk oriented step execution.
+        type: boolean
+      item_filter_count:
+        description: The current number of items that have been filtered for a chunk
+          oriented step execution, otherwise null.
+        format: int32
+        type: integer
+      item_write_count:
+        description: The current number of items that have been written for a chunk
+          oriented step execution, otherwise null.
+        format: int32
+        type: integer
+      modification_time:
+        description: Timestamp of the last modification time for the execution.
+        format: date-time
+        type: string
+      start_time:
+        description: Timestamp, when execution was started.
+        format: date-time
+        type: string
+      status:
+        description: "The current status. If the step execution is currently executed\
+          \ (execution status is one of 'pending', 'running',\n 'pausing') the execution\
+          \ status is returned. If the step execution is not executed currently anymore\
+          \ (execution\n status is one one 'finished', 'paused' or 'aborted') the\
+          \ exit status code of the step execution is returned."
+        type: string
+      status_metadata:
+        $ref: '#/definitions/status_metadata'
+        description: The metadata of the status.
+      step_description:
+        description: Description of the step, this execution belongs to.ID of the
+          step
+        type: string
+      step_id:
+        description: ID of the step, this execution belongs to.ID of the step
+        type: string
+      step_type_id:
+        description: ID of the step's type at the time it is or was executed.
+        type: string
+      step_type_info:
+        description: "Additional information regarding the step's type at the time\
+          \ it is or was executed (e.g. name of a script module\n and function)."
+        type: string
+      total_item_count:
+        description: "The total number of items that will be processed for a chunk\
+          \ oriented step execution (null if unknown), otherwise\n null."
+        format: int64
+        type: integer
+  status_metadata:
+    properties:
+      client_id:
+        description: The client ID that is responsible for the status.
+        type: string
+      reason:
+        description: The reason of the status.
+        type: string
+      user_login:
+        description: The user login that is responsible for the status.
+        type: string
+  job_execution_request:
+    description: Specification of a parameter for a job execution.
+    properties:
+      parameters:
+        description: ''
+        items:
+          $ref: '#/definitions/job_execution_parameter'
+        type: array
+  job_execution:
+    properties:
+      client_id:
+        description: When the execution was started by a client, this represents the
+          client's id.
+        type: string
+      continue_information:
+        $ref: '#/definitions/job_execution_continue_information'
+        description: The continuation information of this execution if available.
+      creation_date:
+        format: date-time
+        type: string
+      duration:
+        description: Time in milliseconds, the execution was or is running.
+        format: int64
+        type: integer
+      effective_duration:
+        description: Time in milliseconds, the job has done work. Paused times are
+          evicted.
+        format: int64
+        type: integer
+      end_time:
+        description: Timestamp, when execution was finished.
+        format: date-time
+        type: string
+      executed_server_id:
+        description: The ID of the server that executed the job.
+        type: string
+      execution_scopes:
+        description: Sorted set of all execution scopes, used by individual steps.
+        items:
+          type: string
+        type: array
+      execution_status:
+        description: "Current execution status of the job.\n \n - 'pending': Execution\
+          \ of the job been initiated but the job is not executing yet. Possible next\
+          \ status:\n 'running' or 'aborting'.\n - 'running': The job is currently\
+          \ actively executed. Possible next status: 'finished', 'pausing' or\n 'aborting'.\n\
+          \ - 'finished': The job execution is finished and is not actively executed\
+          \ currently. Possible next status: none,\n or 'retrying' (if the job failed\
+          \ and retry is enabled)\n - 'pausing': Pausing of a running job execution\
+          \ has been initiated but the job is not paused yet. Possible next\n status:\
+          \ 'paused' or 'aborting'.\n - 'paused': The job execution is paused and\
+          \ is not actively executed currently. Possible next status:\n 'resuming'\
+          \ or 'restarting'.\n - 'resuming': Resume of a paused job execution has\
+          \ been initiated but the job is not resumed yet. Possible next\n status:\
+          \ 'resumed' or 'aborting'.\n - 'resumed': A paused job execution is resumed\
+          \ and is currently actively executed. Possible next status:\n 'finished',\
+          \ 'pausing' or 'aborting'.\n - 'restarting': Restart of a paused job execution\
+          \ has been initiated but the job is not restarted yet. Possible\n next status:\
+          \ 'restarted' or 'aborting'.\n - 'restarted': A paused job execution is\
+          \ restarted and is currently actively currently. Possible next status:\n\
+          \ 'finished', 'pausing' or 'aborting'.\n - 'retrying': Retry of a finished\
+          \ (but failed) job execution has been initiated but the job is not retried\
+          \ yet.\n Possible next status: 'retried' or 'aborting'.\n - 'retried': A\
+          \ finished (but failed) job execution is retried and is currently actively\
+          \ currently. Possible\n next status: 'finished', 'pausing' or 'aborting'.\n\
+          \ - 'aborting': Abort of running job execution has been initiated but the\
+          \ job is not aborted yet. Possible next\n status: 'aborted'.\n - 'aborted':\
+          \ A running job execution has been aborted and is not actively executed\
+          \ currently. Possible next\n status: none.\n "
+        enum:
+        - pending
+        - running
+        - pausing
+        - paused
+        - resuming
+        - resumed
+        - restarting
+        - restarted
+        - retrying
+        - retried
+        - aborting
+        - aborted
+        - finished
+        - unknown
+        type: string
+      exit_status:
+        $ref: '#/definitions/status'
+        description: "The exit status of the job execution, if the job execution is\
+          \ in execution status 'finished', 'paused' or\n 'aborted' and is not executed\
+          \ currently anymore."
+      id:
+        description: ID of the execution object.
+        type: string
+      is_log_file_existing:
+        description: True if the log file exists, otherwise false.
+        type: boolean
+      is_restart:
+        description: True if this execution represents a job restart.
+        type: boolean
+      job_description:
+        description: Description of the job, this execution belongs to.
+        type: string
+      job_id:
+        description: ID of the job, this execution belongs to.
+        type: string
+      last_modified:
+        format: date-time
+        type: string
+      log_file_path:
+        description: Full WebDAV path of the log file, containing execution log.
+        type: string
+      modification_time:
+        description: Timestamp of the last modification time for the execution.
+        format: date-time
+        type: string
+      parameters:
+        description: List of all job execution parameters.
+        items:
+          $ref: '#/definitions/job_execution_parameter'
+        type: array
+      retry_information:
+        $ref: '#/definitions/job_execution_retry_information'
+        description: The retry information of this execution if available.
+      start_time:
+        description: Timestamp, when execution was started.
+        format: date-time
+        type: string
+      status:
+        description: "The current status. If the job execution is currently executed\
+          \ (execution status is one of 'pending', 'running',\n 'pausing', 'resuming',\
+          \ 'resumed', 'restarting', 'restarted', 'retrying', 'retried', 'aborting')\
+          \ the execution\n status is returned. If the job execution is not executed\
+          \ currently anymore (execution status is one one\n 'finished', 'paused'\
+          \ or 'aborted') the exit status code of the job execution is returned."
+        type: string
+      status_metadata:
+        $ref: '#/definitions/status_metadata'
+        description: The metadata of the status.
+      step_executions:
+        description: List of all steps, called for job execution.
+        items:
+          $ref: '#/definitions/job_step_execution'
+        type: array
+      user_login:
+        description: When the execution was started by a registered user, this represents
+          the user's login.
+        type: string
+  job_execution_parameter:
+    description: Specification of a parameter for a job execution.
+    properties:
+      name:
+        description: The name of the parameter.
+        maxLength: 256
+        minLength: 1
+        pattern: \S|(\S(.*)\S)
+        type: string
+      value:
+        description: The value of the parameter.
+        maxLength: 1000
+        pattern: \S|(\S(.*)\S)
+        type: string
+    required:
+    - name
+    - value
+  job_execution_continue_information:
+    description: Information for a job execution continuation.
+    properties:
+      continue_status:
+        description: Returns the status, this job execution will get on continuation
+          if continuation is pending.
+        enum:
+        - pending
+        - running
+        - pausing
+        - paused
+        - resuming
+        - resumed
+        - restarting
+        - restarted
+        - retrying
+        - retried
+        - aborting
+        - aborted
+        - aborting_for_restart
+        - aborted_for_restart
+        - finished
+        - unknown
+        type: string
+      is_pending:
+        description: "Returns true if the continuation of this job execution is pending\
+          \ and will be started soon,\n false otherwise."
+        type: boolean
+paths:
+  /jobs/{job_id}/executions:
+    post:
+      description: "Executes the job with the given job ID by creating and returning\
+        \ a job execution for it. The job might still be\n executed when the job execution\
+        \ is returned. Note that this resource is also intended for running system\
+        \ jobs.\n \n See Global Jobs for information on available system jobs.\n "
+      operationId: postJobsByIDExecutions
+      parameters:
+      - description: The ID of the job to execute.
+        in: path
+        minLength: 1
+        name: job_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        schema:
+          $ref: '#/definitions/job_execution_request'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/job_execution'
+        '400':
+          description: "`JobAlreadyRunningException` - if the job is\n           \
+            \  already running. or `JobInvalidException` - if the job is invalid\n\
+            \             and is therefore not executable. or `JobRestartException`\
+            \ - if the job could not\n             be restarted. or `JobNotRestartableException`\
+            \ - if the job\n             does not support restarting. or `JobExecutionException`\
+            \ - if the job could\n             not be executed."
+        '404':
+          description: "`JobNotFoundException` - if the job with the given job ID\n\
+            \             doesn't exist."
+      security:
+      - oauth2_application: []
+      tags:
+      - jobs

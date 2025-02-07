@@ -1,0 +1,301 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  customer_address:
+    description: Document representing a customer address.
+    properties:
+      address1:
+        description: The customer's first address.
+        x-label:
+          default: Address 1
+        maxLength: 256
+        type: string
+      address2:
+        description: The customer's second address value.
+        x-label:
+          default: Address 2
+        maxLength: 256
+        type: string
+      address_id:
+        description: The customer address id.
+        x-label:
+          default: Address ID
+        maxLength: 256
+        type: string
+      city:
+        description: The customer's city.
+        x-label:
+          default: City
+        maxLength: 256
+        type: string
+      company_name:
+        description: The customer's company name.
+        x-label:
+          default: Company
+        maxLength: 256
+        type: string
+      country_code:
+        description: The customer's two-character country code per ISO 3166-1 alpha-2.
+        enum:
+        - CN
+        - FR
+        - GB
+        - IT
+        - JP
+        - US
+        x-enum-labels:
+        - default: China
+        - default: France
+        - default: United Kingdom
+        - default: Italy
+        - default: Japan
+        - default: United States
+        x-label:
+          default: Country
+        maxLength: 2
+        type: string
+      creation_date:
+        description: Returns the value of attribute 'creationDate'.
+        format: date-time
+        x-label:
+          default: Creation Date
+        readOnly: true
+        type: string
+      etag:
+        description: The generated eTag representing the state of the customer address.
+        type: string
+      first_name:
+        description: The customer's first name.
+        x-label:
+          default: First Name
+        maxLength: 256
+        type: string
+      full_name:
+        description: The concatenation of the customer's first, middle, and last names
+          and its suffix.
+        type: string
+      job_title:
+        description: The customer's job title.
+        x-label:
+          default: Job Title
+        maxLength: 256
+        type: string
+      last_modified:
+        description: Returns the value of attribute 'lastModified'.
+        format: date-time
+        x-label:
+          default: Last Modified
+        readOnly: true
+        type: string
+      last_name:
+        description: The customer's last name.
+        x-label:
+          default: Last Name
+        maxLength: 256
+        type: string
+      phone:
+        description: The customer's phone number.
+        x-label:
+          default: Contact Phone
+        maxLength: 32
+        type: string
+      post_box:
+        description: The customer's post box.
+        x-label:
+          default: Post Box
+        maxLength: 256
+        type: string
+      postal_code:
+        description: The customer's postal code.
+        x-label:
+          default: Postal Code
+        maxLength: 256
+        type: string
+      salutation:
+        description: The customer's salutation.
+        x-label:
+          default: Salutation
+        maxLength: 256
+        type: string
+      second_name:
+        description: The customer's second name.
+        x-label:
+          default: Second Name
+        maxLength: 256
+        type: string
+      state_code:
+        description: The customer's state.
+        x-label:
+          default: State
+        maxLength: 256
+        type: string
+      suffix:
+        description: The customer's suffix.
+        x-label:
+          default: Suffix
+        maxLength: 256
+        type: string
+      suite:
+        description: The customer's suite.
+        x-label:
+          default: Suite No.
+        maxLength: 32
+        type: string
+      title:
+        description: The customer's title.
+        x-label:
+          default: Title
+        maxLength: 256
+        type: string
+    required:
+    - address_id
+    - country_code
+    - last_name
+paths:
+  /customer_lists/{list_id}/customers/{customer_no}/addresses/{address_id}:
+    delete:
+      description: Action which deletes a customer address.
+      operationId: deleteCustomerListsByIDCustomersByIDAddressesByID
+      parameters:
+      - description: The customer list id
+        in: path
+        minLength: 1
+        name: list_id
+        required: true
+        type: string
+      - description: The customer number
+        in: path
+        minLength: 1
+        name: customer_no
+        required: true
+        type: string
+      - description: The address id
+        in: path
+        minLength: 1
+        name: address_id
+        required: true
+        type: string
+      responses:
+        '204':
+          description: ''
+        '404':
+          description: '`CustomerListCustomerNotFoundException` - Indicates that the
+            customer with the given customer number is unknown. or `CustomerListNotFoundException`
+            - Indicates that the customer list with the given customer list id is
+            unknown.'
+      security:
+      - oauth2_application: []
+      tags:
+      - customer_lists
+    get:
+      description: Action which returns an address of a customer.
+      operationId: getCustomerListsByIDCustomersByIDAddressesByID
+      parameters:
+      - description: The customer list id
+        in: path
+        minLength: 1
+        name: list_id
+        required: true
+        type: string
+      - description: The customer number
+        in: path
+        minLength: 1
+        name: customer_no
+        required: true
+        type: string
+      - description: The address id
+        in: path
+        minLength: 1
+        name: address_id
+        required: true
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer_address'
+        '404':
+          description: '`CustomerListCustomerNotFoundException` - Indicates that the
+            customer with the given customer number is unknown. or `CustomerListNotFoundException`
+            - Indicates that the customer list with the given customer list id is
+            unknown. or `CustomerListCustomerAddressNotFoundException` - Indicates
+            that the customer address id is unknown.'
+      security:
+      - oauth2_application: []
+      tags:
+      - customer_lists
+    patch:
+      description: Action which updates an address of a customer with the given address
+        information.
+      operationId: patchCustomerListsByIDCustomersByIDAddressesByID
+      parameters:
+      - description: The customer list id
+        in: path
+        minLength: 1
+        name: list_id
+        required: true
+        type: string
+      - description: The customer number
+        in: path
+        minLength: 1
+        name: customer_no
+        required: true
+        type: string
+      - description: The address id
+        in: path
+        minLength: 1
+        name: address_id
+        required: true
+        type: string
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/customer_address'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/customer_address'
+        '400':
+          description: '`InvalidAddressIdException` - If the new address id is empty.
+            or `AddressIdAlreadyInUseException` - If the new address id is already
+            in use.'
+        '404':
+          description: '`CustomerListCustomerNotFoundException` - Indicates that the
+            customer with the given customer number is unknown. or `CustomerListNotFoundException`
+            - Indicates that the customer list with the given customer list id is
+            unknown. or `CustomerListCustomerAddressNotFoundException` - Indicates
+            that the customer address id is unknown.'
+      security:
+      - oauth2_application: []
+      tags:
+      - customer_lists

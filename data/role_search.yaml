@@ -1,0 +1,503 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  role_webdav_permissions:
+    description: Document listing the WebDAV permissions assigned to a certain role.
+    properties:
+      unscoped:
+        description: The list of unscoped WebDAV permissions.
+        items:
+          $ref: '#/definitions/role_webdav_permission'
+        type: array
+  role_functional_permission:
+    description: Document representing a functional permission.
+    properties:
+      name:
+        description: The name of the functional permission.
+        minLength: 1
+        type: string
+      type:
+        description: The permission type ("functional").
+        minLength: 1
+        type: string
+      value:
+        description: The non domain specific value for the functional permission,
+          e.g. ACCESS or READONLY.
+        type: string
+      values:
+        additionalProperties:
+          type: string
+        description: The map of value per domain for the functional permission, e.g.
+          ACCESS or READONLY per domain name.
+        type: object
+    required:
+    - name
+    - type
+  role_permissions:
+    description: Document listing the permissions assigned to a certain role (accessible
+      by type).
+    properties:
+      functional:
+        $ref: '#/definitions/role_functional_permissions'
+        description: The functional permissions.
+      locale:
+        $ref: '#/definitions/role_locale_permissions'
+        description: The locale permissions.
+      module:
+        $ref: '#/definitions/role_module_permissions'
+        description: The module permissions.
+      webdav:
+        $ref: '#/definitions/role_webdav_permissions'
+        description: The WebDAV permissions.
+  result_page:
+    description: Data that can be used to get the next and previous page of a Data
+      API results object.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        type: integer
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        type: integer
+  query:
+    description: "Document representing a query. A query contains a set of objects\
+      \ that define criteria\n used to select records. A query can contain one of\
+      \ the following:\n"
+  role_module_permission:
+    description: Document representing a module permission.
+    properties:
+      application:
+        description: The permission application (e.g. "bm", "csc").
+        minLength: 1
+        type: string
+      name:
+        description: The related menu action name of the module permission.
+        minLength: 1
+        type: string
+      system:
+        description: Flag to indicate a system menu action. This is `false` for custom
+          menu actions.
+        type: boolean
+      type:
+        description: The permission type ("module").
+        minLength: 1
+        type: string
+      value:
+        description: The non domain specific value for the module permission, e.g.
+          ACCESS or READONLY.
+        type: string
+      values:
+        additionalProperties:
+          type: string
+        description: The map of value per domain for the module permission, e.g. ACCESS
+          or READONLY per domain name.
+        type: object
+    required:
+    - application
+    - name
+    - type
+  role_search_request:
+    description: "Document representing an role search.\n\n Note that only either\
+      \ an user ID or a permission can be provided (or none), but not both. When one\
+      \ of them is provided,\n the further query elements will filter the respective\
+      \ role set (meaning the user ID / permission is AND-connected to the query definition).\n\
+      \n When a permission definition is using a site scope, it can contain only one\
+      \ site.\n\n When optional fields in the permission definitions are not provided,\
+      \ they will be treated as 'don't care' (so its e.g. possible so search for\n\
+      \ permission to site-specific BM modules without providing a site, and the search\
+      \ will return all roles having that permission for any site)."
+    properties:
+      count:
+        description: The number of returned documents
+        format: int32
+        maximum: 200
+        minimum: 1
+        type: integer
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        minimum: 0
+        type: integer
+      expand:
+        description: List of expansions to be applied to each search results. Expands
+          are optional
+        items:
+          type: string
+        type: array
+      permissions:
+        $ref: '#/definitions/role_permissions'
+        description: "The permission to search for. Note that even though this is\
+          \ a container that can hold multiple permissions definitions,\n for a search\
+          \ request only one permission can be provided (otherwise an error will be\
+          \ returned)."
+      query:
+        $ref: '#/definitions/query'
+        description: The query to apply
+        x-sub_types:
+          nested_query: '#/definitions/nested_query'
+          filtered_query: '#/definitions/filtered_query'
+          text_query: '#/definitions/text_query'
+          match_all_query: '#/definitions/match_all_query'
+          term_query: '#/definitions/term_query'
+          bool_query: '#/definitions/bool_query'
+      select:
+        description: The field to be selected.
+        type: string
+      sorts:
+        description: The list of sort clauses configured for the search request. Sort
+          clauses are optional.
+        items:
+          $ref: '#/definitions/sort'
+        type: array
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      user_id:
+        description: The id of the user whose roles are to be searched.
+        type: string
+    required:
+    - query
+  role_webdav_permission:
+    description: Document representing a WebDAV permission.
+    properties:
+      folder:
+        description: The related folder of the WebDAV permission.
+        minLength: 1
+        type: string
+      type:
+        description: The permission type ("webdav").
+        minLength: 1
+        type: string
+      value:
+        description: The non domain specific value for the WebDAV permission, e.g.
+          ACCESS or READONLY.
+        type: string
+      values:
+        additionalProperties:
+          type: string
+        description: The map of value per domain for the WebDAV permission, e.g. ACCESS
+          or READONLY per domain name.
+        type: object
+    required:
+    - folder
+    - type
+  role_functional_permissions:
+    description: Document listing the functional permissions assigned to a certain
+      role.
+    properties:
+      organization:
+        description: The list of organization functional permissions.
+        items:
+          $ref: '#/definitions/role_functional_permission'
+        type: array
+      site:
+        description: The list of site functional permissions.
+        items:
+          $ref: '#/definitions/role_functional_permission'
+        type: array
+  sort:
+    description: Document representing a sort request.
+    properties:
+      field:
+        description: The name of the field to sort on.
+        type: string
+      sort_order:
+        description: The sort order to be applied when sorting. When omitted, the
+          default sort order (ASC) is used.
+        enum:
+        - asc
+        - desc
+        type: string
+    required:
+    - field
+  role_module_permissions:
+    description: Document listing the module permissions assigned to a certain role.
+    properties:
+      organization:
+        description: The list of organization module permissions.
+        items:
+          $ref: '#/definitions/role_module_permission'
+        type: array
+      site:
+        description: The list of site module permissions.
+        items:
+          $ref: '#/definitions/role_module_permission'
+        type: array
+  user:
+    description: Document representing a user.
+    properties:
+      creation_date:
+        format: date-time
+        type: string
+      disabled:
+        description: Flag whether the user is disabled.
+        type: boolean
+      email:
+        description: The email address.
+        maxLength: 256
+        type: string
+      external_id:
+        description: The external id. This attribute is only valid when the user uses
+          centralized authentication.
+        maxLength: 256
+        type: string
+      first_name:
+        description: The first name.
+        maxLength: 256
+        type: string
+      last_login_date:
+        description: Last login of the user.
+        format: date
+        type: string
+      last_modified:
+        format: date-time
+        type: string
+      last_name:
+        description: The last name.
+        maxLength: 256
+        type: string
+      link:
+        description: URL that is used to get this instance.  This property is computed
+          and cannot be modified.
+        type: string
+      locked:
+        description: Flag whether the user is locked.
+        type: boolean
+      login:
+        description: The user login.
+        maxLength: 256
+        type: string
+      password:
+        description: "The password. This attribute is only used to set the password\
+          \ upon user creation.\n This attribute is only valid when the user does\
+          \ not use centralized authentication."
+        type: string
+      password_expiration_date:
+        description: The user password expiration time
+        format: date-time
+        type: string
+      password_modification_date:
+        description: The time, where the password was last modified
+        format: date-time
+        type: string
+      preferred_data_locale:
+        description: "The effective preferred data locale of the user. A locale is\
+          \ only considered if the user has at least read\n permission on the locale."
+        type: string
+      preferred_ui_locale:
+        description: The preferred UI locale of the user.
+        type: string
+      roles:
+        description: List of role ids the user is assigned to.
+        items:
+          type: string
+        type: array
+    required:
+    - email
+    - last_name
+  role_locale_permission:
+    description: Document representing a locale permission.
+    properties:
+      locale_id:
+        description: The related locale id of the locale permission.
+        minLength: 1
+        type: string
+      type:
+        description: The permission type ("locale").
+        minLength: 1
+        type: string
+      value:
+        description: The non domain specific value for the locale permission, e.g.
+          ACCESS or READONLY.
+        type: string
+      values:
+        additionalProperties:
+          type: string
+        description: The map of value per domain for the locale permission, e.g. ACCESS
+          or READONLY per domain name.
+        type: object
+    required:
+    - locale_id
+    - type
+  role_locale_permissions:
+    description: Document listing the locale permissions assigned to a certain role.
+    properties:
+      unscoped:
+        description: The list of unscoped locale permissions.
+        items:
+          $ref: '#/definitions/role_locale_permission'
+        type: array
+  role_search_result:
+    description: Document representing an access role search result.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        items:
+          type: object
+        type: array
+      db_start_record_:
+        description: The zero-based index of the record that we want to start with,
+          used to optimize special handling
+        format: int32
+        minimum: 0
+        type: integer
+      expand:
+        description: List of expansions to be applied to each search results. Expands
+          are optional
+        items:
+          type: string
+        type: array
+      hits:
+        description: The sorted array of search hits. Can be empty.
+        items:
+          $ref: '#/definitions/role'
+        type: array
+      next:
+        $ref: '#/definitions/result_page'
+        description: The URL of the next result page.
+      previous:
+        $ref: '#/definitions/result_page'
+        description: The URL of the previous result page.
+      query:
+        $ref: '#/definitions/query'
+        description: The query passed into the search
+        x-sub_types:
+          nested_query: '#/definitions/nested_query'
+          filtered_query: '#/definitions/filtered_query'
+          text_query: '#/definitions/text_query'
+          match_all_query: '#/definitions/match_all_query'
+          term_query: '#/definitions/term_query'
+          bool_query: '#/definitions/bool_query'
+      select:
+        description: The fields that you want to select.
+        type: string
+      sorts:
+        description: The list of sort clauses configured for the search request. Sort
+          clauses are optional.
+        items:
+          $ref: '#/definitions/sort'
+        type: array
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+  role:
+    description: Document representing an access role.
+    properties:
+      creation_date:
+        format: date-time
+        type: string
+      description:
+        description: The role description.
+        type: string
+      id:
+        description: The role ID.
+        type: string
+      last_modified:
+        format: date-time
+        type: string
+      link:
+        description: URL that is used to get this instance.  This property is computed
+          and cannot be modified.
+        type: string
+      permissions:
+        $ref: '#/definitions/role_permissions'
+        description: The permissions assigned to the access role. Available through
+          expands.
+      user_count:
+        description: Number of users assigned to the role.
+        format: int32
+        type: integer
+      user_manager:
+        description: Flag whether this role is allowed to manage users or other access
+          roles.
+        type: boolean
+      users:
+        description: The users assigned to the access role. Available through expands.
+        items:
+          $ref: '#/definitions/user'
+        type: array
+paths:
+  /role_search:
+    post:
+      description: "Searches for access roles.\n The query attribute specifies a complex\
+        \ query that can be used to narrow down the search. These are the list\n of\
+        \ searchable attributes:\n \n - id - String\n - description - String\n \n\
+        \ Optionally, a user ID (the user login) can be specified. When it is supplied,\
+        \ the search for roles is limited to the\n roles assigned to this user. When\
+        \ expanding the permissions for the roles, all effective permissions for this\
+        \ user can be retrieved.\n\n Optionally, a (single) permission can be specified.\
+        \ When it is supplied, the search for roles is limited to the\n roles having\
+        \ this permission. When expanding the users for the roles, all users having\
+        \ this permission can be retrieved.\n\n The output of the query can also be\
+        \ sorted. These are the list of sortable attributes:\n \n - id - String\n\
+        \ - description - String\n "
+      operationId: postRoleSearch
+      parameters:
+      - in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/role_search_request'
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/role_search_result'
+        '400':
+          description: '`MalformedSearchParameterException` - Thrown if the query
+            is ill-formed. or `InvalidSearchQueryException` - Throws when one of the
+            search request restrictions is violated'
+      security:
+      - oauth2_application: []
+      tags:
+      - role_search

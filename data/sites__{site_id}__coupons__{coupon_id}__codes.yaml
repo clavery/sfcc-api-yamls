@@ -1,0 +1,129 @@
+swagger: '2.0'
+host: abcd-001.dx.commercecloud.salesforce.com
+info:
+  description: 'Data API endpoints enable developers to build applications for merchants:
+    Create, update, delete business objects, like products, customers, pricing and
+    promotions or assignments. They typically provide read and write access and are
+    designed for moderate usage.'
+  title: Data API
+  version: '24.1'
+basePath: /s/-/dw/data/v24.1
+consumes:
+- application/json
+- text/xml
+- application/xml
+produces:
+- application/json
+- text/xml
+- application/xml
+securityDefinitions:
+  oauth2_application:
+    description: Authentication flow with client ID and password with account manager.
+    flow: application
+    tokenUrl: https://account.demandware.com:443/dw/oauth2/access_token
+    type: oauth2
+  client_id:
+    description: Add client ID for application identification. Alternative as 'client_id'
+      query parameter.
+    in: header
+    name: x-dw-client-id
+    type: apiKey
+definitions:
+  coupon_codes:
+    description: Document representing a set of coupon codes.
+    properties:
+      count:
+        description: The number of returned documents.
+        format: int32
+        type: integer
+      data:
+        description: The collection of coupon codes
+        items:
+          $ref: '#/definitions/coupon_code'
+        type: array
+      expand:
+        description: The list of expands set for the search request. Expands are optional.
+        items:
+          type: string
+        type: array
+      next:
+        description: The URL of the next result page.
+        type: string
+      previous:
+        description: The URL of the previous result page.
+        type: string
+      select:
+        description: The fields that you want to select.
+        type: string
+      start:
+        description: The zero-based index of the first search hit to include in the
+          result.
+        format: int32
+        minimum: 0
+        type: integer
+      total:
+        description: The total number of documents.
+        format: int32
+        type: integer
+  coupon_code:
+    description: A coupon code with accompanying stats for redemptions and issued.
+    properties:
+      code:
+        description: The code used to redeem the coupon
+        type: string
+      issued:
+        description: Flag indicating if the coupon code has been issued
+        type: boolean
+      redemption_count:
+        description: The count of the number of redemptions associated with the code
+        format: int32
+        type: integer
+paths:
+  /sites/{site_id}/coupons/{coupon_id}/codes:
+    get:
+      description: "Get the coupon codes for the given coupon.\n\n If the role to\
+        \ which the user belongs does not have View_Coupon_Codes permission, then\
+        \ the coupon codes returned will be masked."
+      operationId: getSitesByIDCouponsByIDCodes
+      parameters:
+      - description: The site context.
+        in: path
+        minLength: 1
+        name: site_id
+        required: true
+        type: string
+      - description: The id of the coupon from which to delete codes (must be a multiple
+          code coupon).
+        in: path
+        name: coupon_id
+        required: true
+        type: string
+      - description: Optional start index for retrieving the codes from a given index
+          (default 0).
+        format: int32
+        in: query
+        name: start
+        type: integer
+      - description: Optional count for retrieving only a subset of the codes (default
+          is 25).
+        format: int32
+        in: query
+        name: count
+        type: integer
+      - description: Optional select clause for getting fields from the returned JSON
+          document.
+        in: query
+        name: select
+        type: string
+      responses:
+        default:
+          description: ''
+          schema:
+            $ref: '#/definitions/coupon_codes'
+        '404':
+          description: '`CouponNotFoundException` - Thrown if the coupon does not
+            exist matching the given id.'
+      security:
+      - oauth2_application: []
+      tags:
+      - sites
